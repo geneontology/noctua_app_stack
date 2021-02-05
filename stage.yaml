@@ -1,4 +1,4 @@
-- hosts: localhost
+- hosts: all
   vars_files:
   - vars.yaml
 
@@ -49,7 +49,7 @@
   - name: Create journal blazegraph.jnl
     docker_container:
       name: create_journal 
-      image: 'minerva:{{ tag }}'
+      image: '{{ docker_hub_user }}/minerva:{{ tag }}'
       command: 'java -jar minerva-cli.jar --import-owl-models -j /stage_dir/blazegraph.jnl -f /stage_dir/noctua-models/models'
       auto_remove: true 
       detach: false
