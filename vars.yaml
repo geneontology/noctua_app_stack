@@ -2,7 +2,7 @@
 ###############
 # Point stage_dir to a different locatiom. By default it will reside in the current directory.
 ##############
-stage_dir: /Users/AEssiari/machine1/stage_dir 
+stage_dir: stage_dir 
 
 ###############
 # repos are cloned and used to build docker images.
@@ -39,7 +39,8 @@ password: REPLACE_ME
 # http://{{ barista_lookup_host }}:{{ barista_proxy_port }}
 # The port should be available on host machine
 #####
-barista_lookup_host: REPLACE_ME
+host: REPLACE_ME
+barista_lookup_host: "{{ host }}"
 barista_proxy_port: 8090
 
 ###
@@ -47,13 +48,14 @@ barista_proxy_port: 8090
 # http://{{ noctua_host }}:{{ noctua_proxy_port }}
 # The port should be available on host machine
 #####
-noctua_host: REPLACE_ME
+noctua_host: "{{ host }}"
 noctua_proxy_port: 8080
 
 #####
 ## GOLR.
 #########
+golr_host: host
 golr_lookup_port: 8983  
-golr_lookup_url: http://REPLACE_ME:{{ golr_lookup_port }}/solr
-golr_neo_lookup_url: http://REPLACE_ME:{{ golr_lookup_port }}/solr
-golr_labels_url: http://REPLACE_ME:{{ golr_lookup_port }}
+golr_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
+golr_neo_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
+golr_labels_url: http://{{ host }}:{{ golr_lookup_port }}
