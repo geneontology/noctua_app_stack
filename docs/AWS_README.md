@@ -7,11 +7,10 @@ Install app stack using ansible on a single machine
 - The steps below were successfully tested using:
     - Terraform (v0.14.4)
 
-## Install Terraform.
+## Install Terraform
 
 
-## Create AWS instance: 
-
+### Create AWS instance: 
 
 
 ```sh
@@ -27,7 +26,7 @@ terraform -chdir=aws show
 
 ```
 
-## Test Instance: 
+### Test Instance: 
 
 ```sh
 export HOST=`terraform output public_ip`
@@ -38,7 +37,7 @@ docker ps
 which docker-compose
 ```
 
-## Stage to AWS Instance: 
+### Stage to AWS Instance: 
 
 Assuming you have built the docker images and pushed them to dockerhub using 
 build_images and push_images playbooks.
@@ -49,7 +48,7 @@ export PRIVATE_KEY=`terraform output private_key_path`
 ansible-playbook -e "stage_dir=/home/ubuntu/stage_dir" -e "host=$HOST" --private-key $PRIVATE_KEY  -u ubuntu -i "$HOST,"  stage.yaml
 ```
 
-## Stage to AWS Instance: 
+### Bring Up The Stack: 
 
 ```
 ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$HOST
