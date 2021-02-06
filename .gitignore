@@ -2,3 +2,6 @@ minerva
 noctua
 amigo
 stage_dir
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
