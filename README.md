@@ -89,8 +89,12 @@ docker-compose -f stage_dir/docker-compose-golr.yaml ps
 #### Access noctua from a browser using `http://localhost:{{ noctua_proxy_port }}`
 - Use `http://localhost:8080` if default `noctua_proxy_port` was used
 
-#### Bring down stack using docker-compose.
+#### Bring down stack using docker-compose. 
 
 ```sh
 docker-compose -f stage_dir/docker-compose-golr.yaml down
+# kill works faster ...
+docker-compose -f stage_dir/docker-compose-golr.yaml kill
+#delete containers:
+docker-compose -f stage_dir/docker-compose-golr.yaml rm -f
 ```
