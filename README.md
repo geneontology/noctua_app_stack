@@ -35,7 +35,9 @@ cd noctua_app_stack
   - uri
   - username
   - password
-  - barista_lookup_host
+  - dockerhub_user
+    - needed to push images to dockerhub and to stage on a remote machine
+  - host
     - On mac if using wireless, you can use `ipconfig getifaddr en0`
 
 #### Build images.
