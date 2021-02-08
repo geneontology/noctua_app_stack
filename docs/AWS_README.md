@@ -7,6 +7,7 @@
 
 ## Install Terraform
 
+- Go to [url](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
 ### Create AWS instance: 
 
