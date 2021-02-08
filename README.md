@@ -1,6 +1,13 @@
 # Noctua App Stack
 
-Deploy app stack using ansible on a single machine
+- Deploy app stack using ansible playbooks on a single machine:
+  - build_images.yaml
+    - builds all docker images on local machine.
+  - push_images.yaml
+    - pushes images to dockerhub if planning on staging to a remote machine.
+  - stage.yaml
+    - Tasks are executed on staging machine which can be local or remote.
+   
 
 ## Requirements 
 
@@ -33,6 +40,7 @@ cd noctua_app_stack
 ## Building Docker Images:
 
 #### Build images.
+- Make sure you set docker_hub_user in vars.yaml to your dockerhub user account if planning on staging to a remote machine.
 
 ```sh
 ansible-playbook build_images.yaml
@@ -40,8 +48,7 @@ docker image list | egrep 'minerva|noctua|golr'
 ```
 
 #### Push images.
-- You only need to push images if planning on staging to a remote machine.
-- You would need to set docker_hub_user in vars.yaml to your dockerhub user account.
+- Make sure you set docker_hub_user in vars.yaml to your dockerhub user account if planning on staging to a remote machine.
 
 ```sh
 ansible-playbook push_images.yaml
