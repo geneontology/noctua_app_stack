@@ -40,7 +40,7 @@ which docker-compose
 ### Stage to AWS Instance: 
 
 Assuming you have built the docker images and pushed them to dockerhub using 
-build_images and push_images playbooks.
+build_images and push_images playbooks as explained in [this document](../README.md)
 
 ```sh
 export HOST=`terraform output public_ip`
