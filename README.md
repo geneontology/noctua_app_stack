@@ -40,37 +40,22 @@ docker image list | egrep 'minerva|noctua|golr'
 ```
 
 #### Push images.
+- You only need to push images if planning on staging on a remote machine.
 
 ```sh
 ansible-playbook push_images.yaml
 ```
-## Deploying app stack: 
+## Staging app stack: 
 
-
-#### Modify `vars.yaml` as needed. Minimally you need to modify the following variables:
-- The steps below were successfully tested using:
-  - host
-    - will be assigned on the command line depending on staging locally or to a remote machine.
-  - uri
-  - username
-  - password
-  - dockerhub_user
-    - Only if you plan to stage to a remote machine.
-    - Used to push images to dockerhub
+#### Modify `vars.yaml`. 
+- These can be set on command line using the -e flag.
+  - Barista:
+    - uri
+    - username
+    - password
+  - DockerHub if planning on staging to a remote machine
+    - docker_hub_user: defaults to username on local machine.
     
-#### Build images.
-
-```sh
-ansible-playbook build_images.yaml
-docker image list | egrep 'minerva|noctua|golr'
-```
-
-#### Push images.
-
-```sh
-ansible-playbook push_images.yaml
-```
-
 #### Stage Artifacts Locally.
   - Create and stage blazegraph journal.
   - Stage repos
