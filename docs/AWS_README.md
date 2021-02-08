@@ -42,9 +42,19 @@ variable "tags" {
 ```
 #### Create AWS instance: 
 
+Note: Terraform creates some folders and files to maintain the state. Use <i>ls -a aws</i>
+
 ```sh
+# This will install the aws provider. 
 terraform -chdir=aws init
+
+# Validate the config
+terraform -chdir=aws validate
+
+# View what is going to be created. The plan.
 terraform -chdir=aws plan
+
+# This will create the vpc, security group and the instance
 terraform -chdir=aws apply
 
 # To view the outputs
