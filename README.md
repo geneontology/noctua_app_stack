@@ -22,23 +22,15 @@ The ansible docker plugin is used to buid docker images.
 pip install ansible
 pip install docker 
 ```
-## Deploying app stack: 
 
-#### Clone this repo.
+## Clone this repo.
 
 ```sh
 git clone https://github.com/abessiari/noctua_app_stack.git
 cd noctua_app_stack
 ```
 
-#### Modify `vars.yaml` as needed. Minimally you need to modify the following variables:
-  - uri
-  - username
-  - password
-  - dockerhub_user
-    - needed to push images to dockerhub and to stage on a remote machine
-  - host
-    - On mac if using wireless, you can use `ipconfig getifaddr en0`
+## Building Docker Images:
 
 #### Build images.
 
@@ -52,8 +44,34 @@ docker image list | egrep 'minerva|noctua|golr'
 ```sh
 ansible-playbook push_images.yaml
 ```
+## Deploying app stack: 
 
-#### Stage artifacts.
+
+#### Modify `vars.yaml` as needed. Minimally you need to modify the following variables:
+- The steps below were successfully tested using:
+  - host
+    - will be assigned on the command line depending on staging locally or to a remote machine.
+  - uri
+  - username
+  - password
+  - dockerhub_user
+    - Only if you plan to stage to a remote machine.
+    - Used to push images to dockerhub
+    
+#### Build images.
+
+```sh
+ansible-playbook build_images.yaml
+docker image list | egrep 'minerva|noctua|golr'
+```
+
+#### Push images.
+
+```sh
+ansible-playbook push_images.yaml
+```
+
+#### Stage Artifacts Locally.
   - Create and stage blazegraph journal.
   - Stage repos
     - noctua-form, noctua-landing-page, noctua-models, go-site
@@ -63,7 +81,9 @@ ansible-playbook push_images.yaml
     - Copy`blazegraph-go-lego-reacto-neo.jnl` to stage_dir
 
 ```sh
-ansible-playbook stage.yaml
+# on Mac:
+export HOST=`ipconfig getifaddr en0`
+ansible-playbook -e "host=$HOST" -i "localhost," stage.yaml
 ```
 #### Bring up stack using docker-compose.
 Two docker-compose files are staged:
