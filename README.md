@@ -1,6 +1,6 @@
 # Noctua App Stack
 
-Install app stack using ansible on a single machine
+Deploy app stack using ansible on a single machine
 
 ## Requirements 
 
@@ -40,7 +40,8 @@ docker image list | egrep 'minerva|noctua|golr'
 ```
 
 #### Push images.
-- You only need to push images if planning on staging on a remote machine.
+- You only need to push images if planning on staging to a remote machine.
+- You would need to set docker_hub_user in vars.yaml to your dockerhub user account.
 
 ```sh
 ansible-playbook push_images.yaml
@@ -48,22 +49,21 @@ ansible-playbook push_images.yaml
 ## Staging app stack: 
 
 #### Modify `vars.yaml`. 
-- These can be set on command line using the -e flag.
+- These can also be set on command line using the -e flag.
   - Barista:
     - uri
     - username
     - password
-  - DockerHub if planning on staging to a remote machine
-    - docker_hub_user: defaults to username on local machine.
     
-#### Stage Artifacts Locally.
-  - Create and stage blazegraph journal.
-  - Stage repos
+#### Stage Artifacts.
+- Staging tasks at a glance:
+  - Creates blazegraph journal.
+  - Creates Solr Index
+  - Clones repos
     - noctua-form, noctua-landing-page, noctua-models, go-site
-  - Note: Stage the journals below to speed up minerva start up time.
-    - Create stage_dir if it does not exist
-    - Copy`blazegraph.jnl` to stage_dir
-    - Copy`blazegraph-go-lego-reacto-neo.jnl` to stage_dir
+  - Creates docker-compose and configuration files from templates.
+- Staging to a remote machine:
+  - Refer to [this document](./docs/AWS_README.md) for provisionning an instance on AWS
 
 ```sh
 # on Mac:
