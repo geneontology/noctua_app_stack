@@ -63,7 +63,7 @@ ansible-playbook push_images.yaml
     - noctua-form, noctua-landing-page, noctua-models, go-site
   - Creates docker-compose and configuration files from templates.
 - Staging to a remote machine:
-  - Refer to [this document](./docs/AWS_README.md) for provisionning an instance on AWS
+  - Refer to [this document](./docs/AWS_README.md) on provisionning an AWS.
 
 ```sh
 # on Mac:
