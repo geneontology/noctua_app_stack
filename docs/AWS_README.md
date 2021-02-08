@@ -1,6 +1,4 @@
-# Deploying Noctua App Stack On 
-
-Install app stack using ansible on a single machine
+# Provision AWS instance.
 
 ## Requirements 
 
