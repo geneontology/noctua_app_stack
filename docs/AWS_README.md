@@ -14,8 +14,8 @@
 
 ```
 [default]
-aws_access_key_id = AKIASLZLS3YO3Q4L7X4V
-aws_secret_access_key = 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
+aws_access_key_id = XXXX
+aws_secret_access_key = XXXX
 ```
 #### SSH Credentials.
 - In aws/vars.tf the private key and the public keys are assumed to be in the standard location
