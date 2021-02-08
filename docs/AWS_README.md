@@ -5,12 +5,42 @@
 - The steps below were successfully tested using:
     - Terraform (v0.14.4)
 
-## Install Terraform
+#### Install Terraform
 
 - Go to [url](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 
-### Create AWS instance: 
+#### AWS Credentials.
+- Create a file or override the location in aws/provider.tf
 
+```
+[default]
+aws_access_key_id = AKIASLZLS3YO3Q4L7X4V
+aws_secret_access_key = 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
+```
+#### SSH Credentials.
+- In aws/vars.tf the private key and the public keys are assumed to be in the standard location
+
+```
+variable "public_key_path" {
+  default = "~/.ssh/id_rsa.pub"
+}
+
+variable "private_key_path" {
+  default = "~/.ssh/id_rsa"
+}
+
+```
+
+#### TAGGING
+- Overide the tag used in vars.tf
+
+```
+variable "tags" {
+  type = map
+  default = { Name = "testing-noctua-app-stack" }
+}
+```
+#### Create AWS instance: 
 
 ```sh
 terraform -chdir=aws init
@@ -25,7 +55,7 @@ terraform -chdir=aws show
 
 ```
 
-### Test Instance: 
+#### Test Instance: 
 
 ```sh
 export HOST=`terraform -chdir=aws output -raw public_ip`
@@ -36,7 +66,7 @@ docker ps
 which docker-compose
 ```
 
-### Stage to AWS Instance: 
+#### Stage to AWS Instance: 
 
 Assuming you have built the docker images and pushed them to dockerhub using 
 build_images and push_images playbooks as explained in [this document](../README.md)
