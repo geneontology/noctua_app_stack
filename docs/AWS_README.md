@@ -52,7 +52,13 @@ ansible-playbook -e "stage_dir=/home/ubuntu/stage_dir" -e "host=$HOST" --private
 
 ```
 ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$HOST
-docker-compose -f stage_dir/docker-compose-golr.yaml
+docker-compose -f stage_dir/docker-compose-golr.yaml up -d
 #When the stack is up you can access it from broswer on port 8080 and using aws instance's public ip. 
 ```
+
+### Destroy instance:
+```
+terraform -chdir=aws destroy
+```
+
 
