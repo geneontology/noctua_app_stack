@@ -3,7 +3,7 @@
 ## Requirements 
 
 - The steps below were successfully tested using:
-    - Terraform (v0.14.4)
+    - Terraform (0.14.4)
 
 #### Install Terraform
 
