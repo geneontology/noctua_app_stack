@@ -1,4 +1,4 @@
-# Noctua App Stack
+# Deploying Noctua App Stack On 
 
 Install app stack using ansible on a single machine
 
@@ -32,7 +32,7 @@ terraform -chdir=aws show
 export HOST=`terraform output public_ip`
 export PRIVATE_KEY=`terraform output private_key_path`
 
-ssh -o StrictHostKeyChecking=no  -i $PRIVATE_KEY ubuntu@$HOST
+ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$HOST
 docker ps
 which docker-compose
 ```
