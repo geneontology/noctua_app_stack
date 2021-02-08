@@ -28,8 +28,8 @@ terraform -chdir=aws show
 ### Test Instance: 
 
 ```sh
-export HOST=`terraform output public_ip`
-export PRIVATE_KEY=`terraform output private_key_path`
+export HOST=`terraform -chdir=aws output public_ip`
+export PRIVATE_KEY=`terraform -chdir=aws output private_key_path`
 
 ssh -o StrictHostKeyChecking=no -i $PRIVATE_KEY ubuntu@$HOST
 docker ps
