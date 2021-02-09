@@ -38,22 +38,41 @@ cd noctua_app_stack
 ```
 
 ## Building Docker Images:
+The playbook <i>build_images.yaml</i> clones minerva, noctua and amigo git repositories 
+and builds corresponding docker images. The default branch used is <i>master</i>. 
+To change the branch being cloned, see <i>repo_map</i> in docker-vars.yaml
+
+In order to stage the app stack to a remote machine, Create an account on dockerhub if you do not have one 
+and a public dockerhub repository named <i>go-images</i>. Then set <i>docker_hub_user</i> in docker-vars.yaml or simply 
+use the -e option when using ansible-playbook command. 
+
 
 #### Build images.
-- Make sure you set docker_hub_user in vars.yaml to your dockerhub user account if planning on staging to a remote machine.
 
 ```sh
-ansible-playbook build_images.yaml
+ansible-playbook -e docker_hub_user=xxxx build_images.yaml
 docker image list | egrep 'minerva|noctua|golr'
 ```
 
 #### Push images.
-- Make sure you set docker_hub_user in vars.yaml to your dockerhub user account if planning on staging to a remote machine.
+- Skip this step if planning on staging locally.
 
 ```sh
-ansible-playbook push_images.yaml
+ansible-playbook -e docker_hub_user=xxxx push_images.yaml
 ```
+
+#### Provision machine and stage app stack on the cloud:
+- Skip this step if planning on staging locally. 
+- Refer to [this document](./docs/AWS_README.md) on provisionning an instance on AWS.
+
 ## Staging app stack: 
+
+#### Staging tasks at a glance:
+- Creates blazegraph journal.
+- Creates Solr Index
+- Clones repos
+  - noctua-form, noctua-landing-page, noctua-models, go-site
+- Creates docker-compose and configuration files from templates.
 
 #### Modify `vars.yaml`. 
 - These can also be set on command line using the -e flag.
