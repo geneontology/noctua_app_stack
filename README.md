@@ -20,8 +20,25 @@
 - Notes:
     - Docker was given 3 CPUs and 8G RAM. (on mac see Docker Preferences | Resources)
     - python 2.7 should work as well.
+    
+## Fast Install using miniconda
 
-## Installing ansible and ansible docker plugin 
+This will install ansible, docker ansible module, docker-compose, and terraform. 
+
+```
+conda env create --file dependencies/bare-metal.yml
+conda activate noctua_app_stack
+
+# when done
+conda deactivate
+
+# delete a conda environment:
+conda env remove  -n noctua_app_stack
+
+```
+
+## Installing ansible and ansible docker plugin using Pip.
+ 
 
 The ansible docker plugin is used to buid docker images.
 
