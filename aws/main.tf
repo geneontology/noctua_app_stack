@@ -12,24 +12,4 @@ resource "aws_instance" "noctua_app_stack_server" {
     tags                  = var.tags
     volume_size           = 100
   }
-
-  provisioner "remote-exec" {
-    inline = [
-      "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh",
-      "sudo sh /tmp/get-docker.sh",
-      "sudo usermod -aG docker ubuntu",
-      "sudo apt-get install -y docker-compose",
-      "curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py",
-      "sudo python3 /tmp/get-pip.py",
-      "sudo pip3 install docker==4.3.1",
-    ] 
-    
-    connection {
-      host        = aws_instance.noctua_app_stack_server.public_ip
-      type        = "ssh"
-      user        = "ubuntu"
-      agent       = false
-      private_key = file(var.private_key_path)
-    }
-  }
 }
