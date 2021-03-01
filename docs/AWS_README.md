@@ -3,7 +3,7 @@
 ## Requirements 
 
 - The steps below were successfully tested using:
-    - Terraform (v0.14.4)
+    - Terraform (0.14.4)
 
 #### Install Terraform
 
@@ -14,8 +14,8 @@
 
 ```
 [default]
-aws_access_key_id = AKIASLZLS3YO3Q4L7X4V
-aws_secret_access_key = 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
+aws_access_key_id = XXXX
+aws_secret_access_key = XXXX
 ```
 #### SSH Credentials.
 - In aws/vars.tf the private key and the public keys are assumed to be in the standard location
@@ -42,9 +42,19 @@ variable "tags" {
 ```
 #### Create AWS instance: 
 
+Note: Terraform creates some folders and files to maintain the state. Use <i>ls -a aws</i>
+
 ```sh
+# This will install the aws provider. 
 terraform -chdir=aws init
+
+# Validate the config
+terraform -chdir=aws validate
+
+# View what is going to be created. The plan.
 terraform -chdir=aws plan
+
+# This will create the vpc, security group and the instance
 terraform -chdir=aws apply
 
 # To view the outputs
