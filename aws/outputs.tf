@@ -1,6 +1,6 @@
-//output "private_key_path" {
-//  value = var.private_key_path
-//}
+output "private_key_path" {
+  value = var.private_key_path
+}
 
 output "noctua_port" {
   value = var.noctua_port
