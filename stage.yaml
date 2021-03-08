@@ -1,4 +1,4 @@
-- hosts: localhost
+- hosts: all
   vars_files:
   - vars.yaml
 
@@ -11,6 +11,7 @@
       - conf
       - barista
       - httpd-confs
+      - srv-solr-data
 
   - name: install configs from templates directory
     template:
@@ -19,24 +20,26 @@
     with_items:
       - { file: 'startup.yaml', dir: 'conf' }
       - { file: 'local.yaml', dir: 'barista' }
-      - { file: 'docker-compose.yaml', dir: '' }
+      - { file: 'docker-compose-amigo.yaml', dir: '' }
+      - { file: 'docker-compose-golr.yaml', dir: '' }
       - { file: 'httpd.conf', dir: 'httpd-confs' }
+      - { file: 'httpd-vhosts-amigo.conf', dir: 'httpd-confs' }
+      - { file: 'httpd-vhosts-golr.conf', dir: 'httpd-confs' }
       - { file: 'httpd-vhosts-barista.conf', dir: 'httpd-confs' }
       - { file: 'httpd-vhosts-noctua.conf', dir: 'httpd-confs' }
 
   - name: Check if repo is staged
     stat:
-      path: '{{ stage_dir }}/{{ item }}'
-    register: staged_repos 
-    with_items:
-      - '{{ staged_repos }}'
+      path: '{{ stage_dir }}/{{ item.key }}'
+    register: staged_repos_results
+    loop: '{{ staged_repos|dict2items }}'
+
   - name: Clone repos that are not staged
     git:
-     repo: 'https://github.com/geneontology/{{ item.item }}.git'
-     dest: '{{ stage_dir }}/{{ item.item }}'
-     version: '{{ branch }}'
-    with_items:
-      - '{{ staged_repos.results }}'
+     repo: 'https://github.com/geneontology/{{ item.item.key }}.git'
+     dest: '{{ stage_dir }}/{{ item.item.key }}'
+     version: '{{ item.item.value }}'
+    loop: '{{ staged_repos_results.results }}'
     when: not item.stat.exists
 
   - name: Check if journal exists 
@@ -46,10 +49,28 @@
   - name: Create journal blazegraph.jnl
     docker_container:
       name: create_journal 
-      image: 'minerva:{{ tag }}'
+      image: '{{ docker_hub_user }}/minerva:{{ tag }}'
       command: 'java -jar minerva-cli.jar --import-owl-models -j /stage_dir/blazegraph.jnl -f /stage_dir/noctua-models/models'
       auto_remove: true 
       detach: false
       volumes:
         - '{{ stage_dir }}:/stage_dir'
     when: not journal_result.stat.exists
+
+  - name: Check if index exists
+    stat:
+      path: '{{ stage_dir }}/srv-solr-data/index'
+    register: index_result
+  - name: Create Solr Index
+    docker_container:
+      name: create_index
+      image: geneontology/golr-autoindex-ontology
+      env:
+         GOLR_SOLR_MEMORY: 4G
+         GOLR_LOADER_MEMORY: 8G
+         GOLR_INPUT_ONTOLOGIES: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
+      auto_remove: true
+      detach: false
+      volumes:
+        - '{{ stage_dir }}/srv-solr-data:/srv/solr/data'
+    when: not index_result.stat.exists

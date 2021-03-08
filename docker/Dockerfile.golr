@@ -1,0 +1,10 @@
+FROM jetty:9-jre8
+
+USER root
+
+RUN mkdir -p /srv/solr/data
+ADD ./golr/solr/solr.war /var/lib/jetty/webapps/
+ADD ./golr/solr/conf/schema.xml /srv/solr/conf/schema.xml
+ADD ./golr/solr/conf/solrconfig.xml /srv/solr/conf/solrconfig.xml
+RUN chown -R jetty:jetty /srv
+USER jetty

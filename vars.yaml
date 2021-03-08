@@ -8,10 +8,19 @@ stage_dir: "{{ lookup('env', 'PWD') }}/stage_dir"
 # repos are cloned and used to build docker images.
 # staged_repos are cloned and deployed under stage_dir
 ##############
-repos: [minerva, noctua]
-staged_repos: [noctua-form, noctua-landing-page, noctua-models, go-site]
-branch: master
+repo_map:
+   minerva: master
+   noctua: master
+   amigo: master
+
+staged_repos:
+   noctua-form: master
+   noctua-landing-page: master
+   noctua-models: master
+   go-site: master
+
 tag: latest 
+docker_hub_user: "{{ lookup('env', 'USER') }}"
 
 ################
 # minerva JAVA_OPTS 
@@ -30,12 +39,23 @@ password: REPLACE_ME
 # http://{{ barista_lookup_host }}:{{ barista_proxy_port }}
 # The port should be available on host machine
 #####
-barista_lookup_host: REPLACE_ME
+host: REPLACE_ME
+barista_lookup_host: "{{ host }}"
 barista_proxy_port: 8090
 
 ###
 # Noctua Access Port from Browser
-# http://localhost:{{ noctua_proxy_port }}
+# http://{{ noctua_host }}:{{ noctua_proxy_port }}
 # The port should be available on host machine
 #####
+noctua_host: "{{ host }}"
 noctua_proxy_port: 8080
+
+#####
+## GOLR.
+#########
+golr_host: "{{ host }}" 
+golr_lookup_port: 8983  
+golr_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
+golr_neo_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
+golr_labels_url: http://{{ host }}:{{ golr_lookup_port }}

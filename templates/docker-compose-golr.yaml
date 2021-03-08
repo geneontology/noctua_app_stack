@@ -1,0 +1,91 @@
+version: '3'
+services:
+
+  golr:
+    hostname: golr
+    container_name: golr
+    image: '{{ docker_hub_user }}/golr:{{ tag }}'
+    environment:
+      JAVA_OPTIONS: "-Xmx4G"
+    command: "-Dsolr.solr.home=/srv/solr"
+    volumes:
+      - {{ stage_dir }}/srv-solr-data:/srv/solr/data
+
+  minerva:
+    hostname: minerva 
+    container_name: minerva 
+    environment:
+      JAVA_OPTS: "{{ minerva_java_opts }}"
+      GOLR_SEED: "{{ golr_lookup_url }}"
+      GOLR_LABELS: "{{ golr_labels_url }}"
+    volumes:
+      - {{ stage_dir }}:/var/minerva
+    image: '{{ docker_hub_user }}/minerva:{{ tag }}'
+    restart: unless-stopped
+    depends_on:
+      - golr
+
+  barista:
+    hostname: barista 
+    container_name: barista  
+    volumes:
+      - {{ stage_dir }}:/stage_dir
+      - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
+    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    command: ./node_modules/.bin/gulp run-barista
+    restart: unless-stopped
+    depends_on:
+      - minerva 
+
+  noctua:
+    hostname: noctua 
+    container_name: noctua  
+    volumes:
+      - {{ stage_dir }}:/stage_dir
+      - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
+    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    command: ./node_modules/.bin/gulp run-noctua
+    restart: unless-stopped
+    depends_on:
+      - minerva 
+      - barista 
+
+  apache_golr:
+    hostname: apache_golr 
+    container_name: apache_golr
+    image: httpd:latest
+    restart: unless-stopped
+    volumes:
+      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-golr.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "{{ golr_lookup_port }}:80"
+    depends_on:
+      - golr
+
+  apache_barista:
+    hostname: apache_barista 
+    container_name: apache_barista
+    image: httpd:latest
+    restart: unless-stopped
+    volumes:
+      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-barista.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "{{ barista_proxy_port }}:80"
+    depends_on:
+      - barista 
+
+  apache_noctua:
+    hostname: apache_noctua
+    container_name: apache_noctua
+    image: httpd:latest
+    restart: unless-stopped
+    volumes:
+      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-noctua.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "{{ noctua_proxy_port }}:80"
+    depends_on:
+      - noctua 
+

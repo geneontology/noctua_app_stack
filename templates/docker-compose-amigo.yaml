@@ -1,15 +1,26 @@
 version: '3'
 services:
 
+  amigo:
+    hostname: amigo
+    container_name: amigo 
+    image: geneontology/amigo-standalone
+    volumes:
+      - {{ stage_dir }}/srv-solr-data:/srv/solr/data
+
   minerva:
     hostname: minerva 
     container_name: minerva 
     environment:
       JAVA_OPTS: "{{ minerva_java_opts }}"
+      GOLR_SEED: "{{ golr_lookup_url }}"
+      GOLR_LABELS: "{{ golr_labels_url }}"
     volumes:
       - {{ stage_dir }}:/var/minerva
-    image: minerva:{{ tag }}
+    image: '{{ docker_hub_user }}/minerva:{{ tag }}'
     restart: unless-stopped
+    depends_on:
+      - amigo
 
   barista:
     hostname: barista 
@@ -17,7 +28,7 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: noctua:{{ tag }}
+    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-barista
     restart: unless-stopped
     depends_on:
@@ -29,12 +40,25 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: noctua:{{ tag }}
+    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-noctua
     restart: unless-stopped
     depends_on:
       - minerva 
       - barista 
+
+  apache_amigo:
+    hostname: apache_amigo 
+    container_name: apache_amigo
+    image: httpd:latest
+    restart: unless-stopped
+    volumes:
+      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-amigo.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+    ports:
+      - "{{ golr_lookup_port }}:80"
+    depends_on:
+      - amigo
 
   apache_barista:
     hostname: apache_barista 
@@ -45,7 +69,7 @@ services:
       - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - {{ stage_dir }}/httpd-confs/httpd-vhosts-barista.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
     ports:
-      - "{{barista_proxy_port }}:80"
+      - "{{ barista_proxy_port }}:80"
     depends_on:
       - barista 
 
@@ -58,7 +82,7 @@ services:
       - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - {{ stage_dir }}/httpd-confs/httpd-vhosts-noctua.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
     ports:
-      - "{{noctua_proxy_port }}:80"
+      - "{{ noctua_proxy_port }}:80"
     depends_on:
       - noctua 
 

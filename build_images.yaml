@@ -1,24 +1,44 @@
-- hosts: localhost
+- name: build docker images
+  hosts: localhost
   vars_files:
-  - vars.yaml
+  - docker-vars.yaml
 
   tasks:
   - name: Checkout repos
     git:
-     repo: 'https://github.com/geneontology/{{ item }}.git'
-     dest: ./{{ item }}
-     version: '{{ branch }}'
-     force: yes
-    with_items:
-      - '{{ repos }}'
+     repo: 'https://github.com/geneontology/{{ item.key }}.git'
+     dest: ./{{ item.key }}
+     version: '{{ item.value }}'
+     force: yes 
+    loop: '{{ repo_map|dict2items }}'
 
   - name: Setting cwd to current directory
     set_fact:
      cwd: "{{ lookup('env', 'PWD') }}"
 
+  - name: build golr container image
+    docker_image:
+      name: '{{ docker_hub_user }}/golr:{{ tag }}'
+      source: build
+      build:
+        dockerfile: '{{ cwd }}/docker/Dockerfile.golr'
+        path: '{{ cwd }}/amigo'
+        pull: no
+      state: present
+
+  - name: build noctua container image
+    docker_image:
+      name: '{{ docker_hub_user }}/noctua:{{ tag }}'
+      source: build
+      build:
+        dockerfile: '{{ cwd }}/docker/Dockerfile.noctua'
+        path: '{{ cwd }}/noctua'
+        pull: no
+      state: present
+
   - name: build minerva container image
     docker_image:
-      name: 'minerva:{{ tag }}'
+      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
       source: build
       build:
         dockerfile: '{{ cwd }}/docker/Dockerfile.minerva'
@@ -26,12 +46,4 @@
         pull: no
       state: present
 
-  - name: build noctua container image
-    docker_image:
-      name: 'noctua:{{ tag }}'
-      source: build
-      build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.noctua'
-        path: '{{ cwd }}/noctua'
-        pull: no
-      state: present
+

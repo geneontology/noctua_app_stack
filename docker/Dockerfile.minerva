@@ -24,13 +24,15 @@ ARG gid=1000
 WORKDIR /app
 
 ENV JAVA_OPTS="-Xmx2G"
+ENV GOLR_SEED="http://golr-aux.geneontology.io/solr"
+ENV GOLR_LABELS="http://noctua-golr.berkeleybop.org"
 
 RUN echo '#!/bin/bash\n\
 set -x\n\
 java $JAVA_OPTS -cp /app/minerva-cli.jar org.geneontology.minerva.server.StartUpTool\
  --use-golr-url-logging --use-request-logging --arachne -g http://skyhook.berkeleybop.org/go-lego-reacto.owl\
  --set-important-relation-parent http://purl.obolibrary.org/obo/LEGOREL_0000000 --port 6800\
- --golr-labels http://noctua-golr.berkeleybop.org --golr-seed http://golr-aux.geneontology.io/solr\
+ --golr-labels $GOLR_LABELS  --golr-seed $GOLR_SEED \
  --ontojournal $1/blazegraph-go-lego-reacto-neo.jnl\
  -f $1/blazegraph.jnl\
  --export-folder $1/noctua-models/models\
