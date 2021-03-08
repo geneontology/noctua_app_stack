@@ -1,0 +1,12 @@
+---
+###############
+# repos are cloned and used to build docker images.
+##############
+repo_map:
+   minerva: master
+   noctua: master
+   amigo: master
+
+tag: latest 
+docker_hub_user: "{{ lookup('env', 'USER') }}"
+#docker_hub_user: "aessiari"
