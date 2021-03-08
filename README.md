@@ -60,7 +60,8 @@ and builds corresponding docker images. The default branch used is <i>master</i>
 To change the branch being cloned, see <i>repo_map</i> in docker-vars.yaml
 
 In order to stage the app stack to a remote machine, Create an account on dockerhub if you do not have one 
-and a public dockerhub repository named <i>go-images</i>. Then set <i>docker_hub_user</i> in docker-vars.yaml or simply 
+and a public dockerhub repository named <i>minerva</i>, <i>noctua</i> and <i>golr</i>. 
+Then set <i>docker_hub_user</i> in docker-vars.yaml or simply 
 use the -e option when using ansible-playbook command. 
 
 
