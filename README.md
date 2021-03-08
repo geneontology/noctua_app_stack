@@ -23,7 +23,10 @@
     
 ## Fast Install using miniconda
 
+To install miniconda go to [url](https://docs.conda.io/en/latest/miniconda.html)
+
 This will install ansible, docker ansible module, docker-compose, and terraform. 
+See dependencies/bare-metal.yml
 
 ```
 conda env create --file dependencies/bare-metal.yml
