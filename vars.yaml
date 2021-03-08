@@ -54,7 +54,7 @@ noctua_proxy_port: 8080
 #####
 ## GOLR.
 #########
-golr_host: host
+golr_host: "{{ host }}" 
 golr_lookup_port: 8983  
 golr_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
 golr_neo_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
