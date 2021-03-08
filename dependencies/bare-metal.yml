@@ -1,0 +1,13 @@
+name: noctua_app_stack
+channels:
+  - defaults
+  - conda-forge
+  - anaconda
+dependencies:
+  - python=3.8.5
+  - pip=20.3.3 
+  - docker-compose=1.25.2
+  - terraform=0.14.6
+  - pip:
+      - ansible==2.10.3
+      - docker==4.3.1
