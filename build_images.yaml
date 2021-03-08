@@ -1,7 +1,7 @@
 - name: build docker images
   hosts: localhost
   vars_files:
-  - vars.yaml
+  - docker-vars.yaml
 
   tasks:
   - name: Checkout repos
@@ -16,13 +16,13 @@
     set_fact:
      cwd: "{{ lookup('env', 'PWD') }}"
 
-  - name: build minerva container image
+  - name: build golr container image
     docker_image:
-      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
+      name: '{{ docker_hub_user }}/golr:{{ tag }}'
       source: build
       build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.minerva'
-        path: '{{ cwd }}/minerva'
+        dockerfile: '{{ cwd }}/docker/Dockerfile.golr'
+        path: '{{ cwd }}/amigo'
         pull: no
       state: present
 
@@ -36,12 +36,14 @@
         pull: no
       state: present
 
-  - name: build golr container image
+  - name: build minerva container image
     docker_image:
-      name: '{{ docker_hub_user }}/golr:{{ tag }}'
+      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
       source: build
       build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.golr'
-        path: '{{ cwd }}/amigo'
+        dockerfile: '{{ cwd }}/docker/Dockerfile.minerva'
+        path: '{{ cwd }}/minerva'
         pull: no
       state: present
+
+

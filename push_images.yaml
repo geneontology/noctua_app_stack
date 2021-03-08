@@ -1,12 +1,12 @@
 - hosts: localhost
   vars_files:
-  - vars.yaml
+  - docker-vars.yaml
 
   tasks:
-  - name: Tag minerva and push to docker hub
+  - name: Tag golr and push to docker hub
     docker_image:
-      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
-      repository: '{{ docker_hub_user }}/minerva:{{ tag }}'
+      name: '{{ docker_hub_user }}/golr:{{ tag }}'
+      repository: '{{ docker_hub_user }}/golr:{{ tag }}'
       push: yes
       source: local
 
@@ -17,9 +17,12 @@
       push: yes
       source: local
 
-  - name: Tag golr and push to docker hub
+
+  - name: Tag minerva and push to docker hub
     docker_image:
-      name: '{{ docker_hub_user }}/golr:{{ tag }}'
-      repository: '{{ docker_hub_user }}/golr:{{ tag }}'
+      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
+      repository: '{{ docker_hub_user }}/:minerva:{{ tag }}'
       push: yes
       source: local
+
+
