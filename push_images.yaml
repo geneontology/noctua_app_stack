@@ -3,26 +3,11 @@
   - docker-vars.yaml
 
   tasks:
-  - name: Tag golr and push to docker hub
-    docker_image:
-      name: '{{ docker_hub_user }}/golr:{{ tag }}'
-      repository: '{{ docker_hub_user }}/golr:{{ tag }}'
-      push: yes
-      source: local
+  - name: Push golr to dockerhub
+    shell: docker push '{{ docker_hub_user }}/golr:{{ tag }}'
 
-  - name: Tag noctua and push to docker hub
-    docker_image:
-      name: '{{ docker_hub_user }}/noctua:{{ tag }}'
-      repository: '{{ docker_hub_user }}/noctua:{{ tag }}'
-      push: yes
-      source: local
+  - name: Push noctua to dockerhub
+    shell: docker push '{{ docker_hub_user }}/noctua:{{ tag }}'
 
-
-  - name: Tag minerva and push to docker hub
-    docker_image:
-      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
-      repository: '{{ docker_hub_user }}/:minerva:{{ tag }}'
-      push: yes
-      source: local
-
-
+  - name: Push minerva to docker hub
+    shell: docker push '{{ docker_hub_user }}/minerva:{{ tag }}'
