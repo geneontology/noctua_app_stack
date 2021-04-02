@@ -115,7 +115,7 @@ ansible-playbook -e docker_hub_user=xxxx push_images.yaml
 ```sh
 # on Mac:
 export HOST=`ipconfig getifaddr en0`
-ansible-playbook -e "host=$HOST" -i "localhost," stage.yaml
+ansible-playbook -e "host=$HOST" -i "localhost," --connection=local stage.yaml
 ```
 #### Bring up stack using docker-compose.
 Two docker-compose files are staged:

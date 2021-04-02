@@ -5,22 +5,13 @@
 stage_dir: "{{ lookup('env', 'PWD') }}/stage_dir"
 
 ###############
-# repos are cloned and used to build docker images.
 # staged_repos are cloned and deployed under stage_dir
 ##############
-repo_map:
-   minerva: master
-   noctua: master
-   amigo: master
-
 staged_repos:
    noctua-form: master
    noctua-landing-page: master
    noctua-models: master
    go-site: master
-
-tag: latest 
-docker_hub_user: "{{ lookup('env', 'USER') }}"
 
 ################
 # minerva JAVA_OPTS 

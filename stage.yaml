@@ -1,6 +1,7 @@
 - hosts: all
   vars_files:
   - vars.yaml
+  - docker-vars.yaml
 
   tasks:
   - name: Create stage directory
@@ -47,14 +48,13 @@
       path: '{{ stage_dir }}/blazegraph.jnl'
     register: journal_result 
   - name: Create journal blazegraph.jnl
-    docker_container:
-      name: create_journal 
-      image: '{{ docker_hub_user }}/minerva:{{ tag }}'
-      command: 'java -jar minerva-cli.jar --import-owl-models -j /stage_dir/blazegraph.jnl -f /stage_dir/noctua-models/models'
-      auto_remove: true 
-      detach: false
-      volumes:
-        - '{{ stage_dir }}:/stage_dir'
+    shell: | 
+         export CMD="java -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
+         docker run --rm \
+                -v '{{ stage_dir }}:/sdir' \
+                -t '{{ docker_hub_user }}/minerva:{{ tag }}' $CMD 
+    args:
+      executable: /bin/bash
     when: not journal_result.stat.exists
 
   - name: Check if index exists
@@ -62,15 +62,13 @@
       path: '{{ stage_dir }}/srv-solr-data/index'
     register: index_result
   - name: Create Solr Index
-    docker_container:
-      name: create_index
-      image: geneontology/golr-autoindex-ontology
-      env:
-         GOLR_SOLR_MEMORY: 4G
-         GOLR_LOADER_MEMORY: 8G
-         GOLR_INPUT_ONTOLOGIES: http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
-      auto_remove: true
-      detach: false
-      volumes:
-        - '{{ stage_dir }}/srv-solr-data:/srv/solr/data'
+    shell: | 
+         docker run --rm \
+                -e GOLR_SOLR_MEMORY=4G \
+                -e GOLR_LOADER_MEMORY=8G \
+                -e GOLR_INPUT_ONTOLOGIES=http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl \
+                -v '{{ stage_dir }}/srv-solr-data:/srv/solr/data' \
+                -t geneontology/golr-autoindex-ontology 
+    args:
+      executable: /bin/bash
     when: not index_result.stat.exists
