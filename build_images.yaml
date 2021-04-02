@@ -12,38 +12,11 @@
      force: yes 
     loop: '{{ repo_map|dict2items }}'
 
-  - name: Setting cwd to current directory
-    set_fact:
-     cwd: "{{ lookup('env', 'PWD') }}"
-
   - name: build golr container image
-    docker_image:
-      name: '{{ docker_hub_user }}/golr:{{ tag }}'
-      source: build
-      build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.golr'
-        path: '{{ cwd }}/amigo'
-        pull: no
-      state: present
+    shell: "docker build -f docker/Dockerfile.golr -t '{{ docker_hub_user }}/golr:{{ tag }}' amigo"
 
   - name: build noctua container image
-    docker_image:
-      name: '{{ docker_hub_user }}/noctua:{{ tag }}'
-      source: build
-      build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.noctua'
-        path: '{{ cwd }}/noctua'
-        pull: no
-      state: present
+    shell: "docker build -f docker/Dockerfile.noctua -t '{{ docker_hub_user }}/noctua:{{ tag }}' noctua"
 
   - name: build minerva container image
-    docker_image:
-      name: '{{ docker_hub_user }}/minerva:{{ tag }}'
-      source: build
-      build:
-        dockerfile: '{{ cwd }}/docker/Dockerfile.minerva'
-        path: '{{ cwd }}/minerva'
-        pull: no
-      state: present
-
-
+    shell: "docker build -f docker/Dockerfile.minerva -t '{{ docker_hub_user }}/minerva:{{ tag }}' minerva"

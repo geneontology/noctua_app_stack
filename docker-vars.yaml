@@ -8,5 +8,4 @@ repo_map:
    amigo: master
 
 tag: latest 
-docker_hub_user: "{{ lookup('env', 'USER') }}"
-#docker_hub_user: "aessiari"
+docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
