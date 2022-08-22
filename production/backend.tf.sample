@@ -1,0 +1,10 @@
+terraform {
+  backend "s3" {
+    bucket  = "REPLACE_ME"
+    profile = "default"
+    key     = "noctua_app_stack/terraform.tfstate"
+    region  = "us-east-1"
+    encrypt = true
+  }
+}
+

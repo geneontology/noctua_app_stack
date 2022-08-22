@@ -2,9 +2,10 @@
   vars_files:
   - vars.yaml
   - docker-vars.yaml
+  - s3-vars.yaml
 
   tasks:
-  - name: Create stage directory
+  - name: Create stage directories
     file:
       path: '{{ stage_dir }}/{{ item }}'
       state: directory
@@ -12,7 +13,6 @@
       - conf
       - barista
       - httpd-confs
-      - srv-solr-data
 
   - name: install configs from templates directory
     template:
@@ -20,21 +20,15 @@
       dest: '{{ stage_dir }}/{{ item.dir }}'
     with_items:
       - { file: 'startup.yaml', dir: 'conf' }
-      - { file: 'local.yaml', dir: 'barista' }
-      - { file: 'docker-compose-amigo.yaml', dir: '' }
-      - { file: 'docker-compose-golr.yaml', dir: '' }
       - { file: 'httpd.conf', dir: 'httpd-confs' }
-      - { file: 'httpd-vhosts-amigo.conf', dir: 'httpd-confs' }
-      - { file: 'httpd-vhosts-golr.conf', dir: 'httpd-confs' }
-      - { file: 'httpd-vhosts-barista.conf', dir: 'httpd-confs' }
-      - { file: 'httpd-vhosts-noctua.conf', dir: 'httpd-confs' }
 
   - name: Check if repo is staged
     stat:
       path: '{{ stage_dir }}/{{ item.key }}'
+      get_checksum: False
+      get_md5: False
     register: staged_repos_results
     loop: '{{ staged_repos|dict2items }}'
-
   - name: Clone repos that are not staged
     git:
      repo: 'https://github.com/geneontology/{{ item.item.key }}.git'
@@ -43,32 +37,98 @@
     loop: '{{ staged_repos_results.results }}'
     when: not item.stat.exists
 
-  - name: Check if journal exists 
-    stat:
-      path: '{{ stage_dir }}/blazegraph.jnl'
-    register: journal_result 
-  - name: Create journal blazegraph.jnl
-    shell: | 
-         export CMD="java -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
-         docker run --rm \
-                -v '{{ stage_dir }}:/sdir' \
-                -t '{{ docker_hub_user }}/minerva:{{ tag }}' $CMD 
-    args:
-      executable: /bin/bash
-    when: not journal_result.stat.exists
+  - name: Handle production mode ...
+    block:
+      - name: install production config from templates directory
+        template:
+          src: '{{ item.file }}'
+          dest: '{{ stage_dir }}/{{ item.dir }}'
+        with_items:
+          - { file: 'docker-compose-production.yaml', dir: '' }
+          - { file: 'httpd-vhosts-prod-barista.conf', dir: 'httpd-confs' }
+          - { file: 'httpd-vhosts-prod-noctua.conf', dir: 'httpd-confs' }
+          - { file: 'github.yaml', dir: 'barista' }
+      - name: copy s3cfg
+        copy:
+          src: "{{ S3_CRED_FILE }}"
+          dest: "{{ stage_dir }}/s3cfg"
+      - name: copy robots.txt 
+        copy:
+          src: "files/robots.txt"
+          dest: "{{ stage_dir }}/httpd-confs/robots.txt"
+      - name: copy blazegraph.jnl 
+        copy:
+          src: "{{ BLAZEGRAPH_JOURNAL }}"
+          dest: "{{ stage_dir }}/blazegraph.jnl"
+    when: PROD_MODE | bool
 
-  - name: Check if index exists
-    stat:
-      path: '{{ stage_dir }}/srv-solr-data/index'
-    register: index_result
-  - name: Create Solr Index
-    shell: | 
-         docker run --rm \
-                -e GOLR_SOLR_MEMORY=4G \
-                -e GOLR_LOADER_MEMORY=8G \
-                -e GOLR_INPUT_ONTOLOGIES=http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl \
-                -v '{{ stage_dir }}/srv-solr-data:/srv/solr/data' \
-                -t geneontology/golr-autoindex-ontology 
-    args:
-      executable: /bin/bash
-    when: not index_result.stat.exists
+  - name: Handle non production mode ...
+    block:
+      - name: Create solr index stage directory
+        file:
+          path: '{{ stage_dir }}/srv-solr-data'
+          state: directory
+      - name: install amigo/golr/barista config from templates directory
+        template:
+          src: '{{ item.file }}'
+          dest: '{{ stage_dir }}/{{ item.dir }}'
+        with_items:
+          - { file: 'docker-compose-amigo.yaml', dir: '' }
+          - { file: 'docker-compose-golr.yaml', dir: '' }
+          - { file: 'local.yaml', dir: 'barista' }
+          - { file: 'httpd-vhosts-amigo.conf', dir: 'httpd-confs' }
+          - { file: 'httpd-vhosts-golr.conf', dir: 'httpd-confs' }
+          - { file: 'httpd-vhosts-barista.conf', dir: 'httpd-confs' }
+          - { file: 'httpd-vhosts-noctua.conf', dir: 'httpd-confs' }
+      - name: Check if index exists
+        stat:
+          path: '{{ stage_dir }}/srv-solr-data/index'
+          get_checksum: False
+          get_md5: False
+          register: index_result
+      - name: Create Solr Index
+        shell: |
+               docker run --rm \
+                 -e GOLR_SOLR_MEMORY=4G \
+                 -e GOLR_LOADER_MEMORY=8G \
+                 -e GOLR_INPUT_ONTOLOGIES=http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl \
+                 -v '{{ stage_dir }}/srv-solr-data:/srv/solr/data' \
+                 -t geneontology/golr-autoindex-ontology
+        args:
+          executable: /bin/bash
+        when: not index_result.stat.exists
+    rescue:
+      - name: Remove index directory
+        file:
+          path: '{{ stage_dir }}/srv-solr-data/index'
+          state: absent
+      - name: Failed to create index
+        command: /bin/false
+    when: not PROD_MODE | bool
+
+  - name: Create journal non production mode
+    block:
+      - name: Check if journal exists 
+        stat:
+          path: '{{ stage_dir }}/blazegraph.jnl'
+          get_checksum: False
+          get_md5: False
+        register: journal_result 
+      - name: Create journal blazegraph.jnl
+        shell: | 
+               export CMD="java -Xmx4G -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
+               docker run --rm \
+                  -v '{{ stage_dir }}:/sdir' \
+                  -t '{{ docker_hub_user }}/minerva:{{ tag }}' $CMD 
+        args:
+          executable: /bin/bash
+        when: not journal_result.stat.exists
+    rescue:
+      - name: Remove journal 
+        file:
+          path: '{{ stage_dir }}/blazegraph.jnl'
+          state: absent
+      - name: Failed to create blazegraph journal
+        command: /bin/false
+    when: not PROD_MODE | bool
+

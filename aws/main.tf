@@ -1,35 +1,40 @@
-resource "aws_instance" "noctua_app_stack_server" {
-  ami                    = "ami-07dd19a7900a1f049"
-  instance_type          = var.instance_type
-  vpc_security_group_ids = [aws_security_group.noctua_app_stack_sg.id]
-  subnet_id = aws_subnet.noctua_app_stack_public_subnet.id
-  key_name               = var.key_name
-  tags                   = var.tags
+variable "tags" {
+  type = map
+  default = { Name = "testing-noctua-app-stack" }
+}
 
-  ebs_block_device {
-    device_name           = "/dev/sda1"
-    delete_on_termination = true
-    tags                  = var.tags
-    volume_size           = 100
-  }
+variable "instance_type" {
+  default = "t2.large"
+}
 
-  provisioner "remote-exec" {
-    inline = [
-      "curl -fsSL https://get.docker.com -o /tmp/get-docker.sh",
-      "sudo sh /tmp/get-docker.sh",
-      "sudo usermod -aG docker ubuntu",
-      "sudo apt-get install -y docker-compose",
-      "curl https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py",
-      "sudo python3 /tmp/get-pip.py",
-      "sudo pip3 install docker==4.3.1",
-    ]
+variable "disk_size" {
+  default = 100
+}
 
-    connection {
-      host        = aws_instance.noctua_app_stack_server.public_ip
-      type        = "ssh"
-      user        = "ubuntu"
-      agent       = false
-      private_key = file(var.private_key_path)
-    }
-  }
+variable "public_key_path" {
+  default = "~/.ssh/id_rsa.pub"
+}
+
+variable "open_ports" {
+  type = list 
+  default = [22, 8090, 8080, 8983]
+}
+
+provider "aws" {
+  region = "us-east-1"
+  shared_credentials_files = [ "~/.aws/credentials" ]
+  profile = "default"
+}
+
+module "base" {
+  source = "git::https://github.com/geneontology/devops-aws-go-instance.git?ref=V2.0"
+  instance_type = var.instance_type
+  public_key_path = var.public_key_path
+  tags = var.tags
+  open_ports = var.open_ports
+  disk_size = var.disk_size
+}
+
+output "public_ip" {
+   value                  = module.base.public_ip
 }

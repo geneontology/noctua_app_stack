@@ -1,0 +1,12 @@
+ssh_keys:
+     public: /Users/REPLACE/SSH/go-ssh.pub
+     private: /Users/REPLACE_ME/SSH/go-ssh
+
+instance:
+    tags:
+       Name: noctua_stack
+    instance_type: t2.large
+    open_ports:
+       - 80
+       - 22
+    disk_size: 100 

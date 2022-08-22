@@ -1,0 +1,7 @@
+####
+#### COMMENT
+####
+---
+  clientID: '{{ github_client_id }}'
+  clientSecret: '{{ github_client_secret }}'
+  callbackURL: 'http://{{ barista_lookup_host }}/auth/github/callback'
