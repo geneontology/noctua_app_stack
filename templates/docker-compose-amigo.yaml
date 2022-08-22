@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
 
   amigo:
@@ -7,6 +7,8 @@ services:
     image: geneontology/amigo-standalone
     volumes:
       - {{ stage_dir }}/srv-solr-data:/srv/solr/data
+    init: true
+    restart: unless-stopped
 
   minerva:
     hostname: minerva 
@@ -18,6 +20,7 @@ services:
     volumes:
       - {{ stage_dir }}:/var/minerva
     image: '{{ docker_hub_user }}/minerva:{{ tag }}'
+    init: true
     restart: unless-stopped
     depends_on:
       - amigo
@@ -30,7 +33,13 @@ services:
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
     image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-barista
+    init: true
     restart: unless-stopped
+    healthcheck:
+       test: wget --no-verbose --timeout=5 --tries=5 --spider http://barista:3400 || kill 1
+       interval: 60s
+       retries: 1
+       start_period: 30s
     depends_on:
       - minerva 
 
@@ -42,7 +51,13 @@ services:
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
     image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-noctua
+    init: true
     restart: unless-stopped
+    healthcheck:
+       test: wget --no-verbose --timeout=5 --tries=5 --spider http://noctua:8910 || kill 1
+       interval: 60s
+       retries: 1
+       start_period: 30s
     depends_on:
       - minerva 
       - barista 
@@ -50,39 +65,42 @@ services:
   apache_amigo:
     hostname: apache_amigo 
     container_name: apache_amigo
-    image: httpd:latest
-    restart: unless-stopped
+    image: {{ apache_proxy_image }}
     volumes:
-      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - {{ stage_dir }}/httpd-confs/httpd-vhosts-amigo.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-amigo.conf:/etc/apache2/sites-enabled/httpd-vhosts-amigo.conf
+      - {{ stage_dir }}/apache_amigo_logs:/var/log/apache2
     ports:
       - "{{ golr_lookup_port }}:80"
+    init: true
+    restart: unless-stopped
     depends_on:
       - amigo
 
   apache_barista:
     hostname: apache_barista 
     container_name: apache_barista
-    image: httpd:latest
-    restart: unless-stopped
+    image: {{ apache_proxy_image }}
     volumes:
-      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - {{ stage_dir }}/httpd-confs/httpd-vhosts-barista.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-barista.conf:/etc/apache2/sites-enabled/httpd-vhosts-barista.conf
+      - {{ stage_dir }}/apache_barista_logs:/var/log/apache2
     ports:
       - "{{ barista_proxy_port }}:80"
+    init: true
+    restart: unless-stopped
     depends_on:
       - barista 
 
   apache_noctua:
     hostname: apache_noctua
     container_name: apache_noctua
-    image: httpd:latest
-    restart: unless-stopped
+    image: {{ apache_proxy_image }}
     volumes:
-      - {{ stage_dir }}/httpd-confs/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - {{ stage_dir }}/httpd-confs/httpd-vhosts-noctua.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+      - {{ stage_dir }}/httpd-confs/httpd-vhosts-noctua.conf:/etc/apache2/sites-enabled/httpd-vhosts-noctua.conf
+      - {{ stage_dir }}/apache_noctua_logs:/var/log/apache2
     ports:
       - "{{ noctua_proxy_port }}:80"
+    init: true
+    restart: unless-stopped
     depends_on:
       - noctua 
 

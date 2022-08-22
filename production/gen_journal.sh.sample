@@ -1,0 +1,9 @@
+# Modify java maximum heap based on your machine
+export CMD="java -Xmx4G -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
+
+git clone https://github.com/geneontology/noctua-models.git
+docker pull geneontology/minerva:v2
+echo docker run --rm -v $PWD:/sdir -t geneontology/minerva:v2  $CMD
+docker run --rm -v $PWD:/sdir -t geneontology/minerva:v2  $CMD
+exit 1
+

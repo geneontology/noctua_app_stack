@@ -6,3 +6,9 @@ stage_dir
 .terraform.lock.hcl
 terraform.tfstate
 terraform.tfstate.backup
+backend.tf
+*.cfg
+*.tfvars.json
+blazegraph.jnl
+config-instance.yaml
+config-stack.yaml

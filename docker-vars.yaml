@@ -9,3 +9,4 @@ repo_map:
 
 tag: latest 
 docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
+apache_proxy_image: geneontology/apache-proxy:v2

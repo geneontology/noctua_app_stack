@@ -9,9 +9,9 @@ COPY ./minerva-converter/pom.xml ./minerva-converter/pom.xml
 COPY ./minerva-lookup/pom.xml ./minerva-lookup/pom.xml
 COPY ./minerva-server/pom.xml ./minerva-server/pom.xml
 COPY ./minerva-cli/pom.xml ./minerva-cli/pom.xml
+COPY ./.git ./.git 
 RUN mvn dependency:go-offline package -B -am -pl minerva-server -DskipTests -Dmaven.javadoc.skip=true -Dsource.skip=true
 
-COPY ./.git ./.git 
 RUN mvn dependency:go-offline package -B -am -pl minerva-cli -DskipTests -Dmaven.javadoc.skip=true -Dsource.skip=true
 
 COPY ./ ./
