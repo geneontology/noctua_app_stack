@@ -1,6 +1,7 @@
 ssh_keys:
-     public: /Users/SOME_USER/SSH/go-ssh.pub
-     private: /Users/SOME_USER/SSH/go-ssh
+     public: REPLACE_ME
+     private: REPLACE_ME
+
 stack:
    vars:
      # PRODUCTION MODE
@@ -13,28 +14,29 @@ stack:
      docker_hub_user: geneontology
      tag: v2 
 
-     # used to upload apache proxy logs to s3 bucket
-     S3_CRED_FILE: /Users/SOME_USER/S3/s3cfg
-     S3_BUCKET: REPLACE_ME
-
-     $ Location of blazegraph.jnl
-     BLAZEGRAPH_JOURNAL: REPLACE_ME
-
-     # DNS hostname  alias can be same as host
-     noctua_host: REPLACE_ME
-     noctua_host_alias: REPLACE_ME
+     # For production the proxy will listen on port 80
      noctua_proxy_port: 80
 
-     # DNS hostname  alias ca be same as host
-     barista_lookup_host: REPLACE_ME
-     barista_lookup_host_alias: REPLACE_ME
-     barista_proxy_port: 80
+     # DNS hostname for noctua
+     noctua_host: aes-test-noctua.geneontology.io
+     noctua_lookup_url: http://aes-test-noctua.geneontology.io
 
+     # DNS hostname for barista
+     barista_lookup_host: aes-test-barista.geneontology.io
+     barista_lookup_url: http://aes-test-barista.geneontology.io
+
+     # url for golr 
+     golr_lookup_url: http://noctua-golr.berkeleybop.org 
+
+     # Used to upload apache proxy logs to s3 bucket
+     S3_CRED_FILE: REPLACE_ME
+     S3_BUCKET: go-service-logs
+
+     # OAUTH
      github_client_id: 'REPLACE_ME'
      github_client_secret: 'REPLACE_ME'
 
-     # urls for golr 
-     golr_lookup_url: REPLACE_ME
-     golr_neo_lookup_url: REPLACE_ME
-     golr_labels_url: REPLACE_ME
+     # Location of blazegraph.jnl
+     BLAZEGRAPH_JOURNAL: REPLACE_ME
+
    scripts: [ stage.yaml, start_production_services.yaml ]
