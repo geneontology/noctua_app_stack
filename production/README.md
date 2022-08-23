@@ -59,11 +59,11 @@ These are same as aws credentials but in a different format. See production/s3cf
 
 Check list:
 - [ ] ssh keys
-- [ ] Choose your workspace name. We append the date. As an example we use production-yy-mm-dd
+- [ ] <b>Choose your workspace name. We append the date. As an example we use production-yy-mm-dd</b>
 - [ ] go-deploy python package has been installed
 - [ ] Remember you can use the -dry-run option
 - [ ] Execute the commands right below
-- [ ] Note down the ip address of the aws instance
+- [ ] Note down the ip address of the aws instance. This can also be found in production-yy-mm-dd.cfg
 
 ```
 cp ./production/backend.tf.sample aws/backend.tf
@@ -75,7 +75,7 @@ go-deploy -init -c config-instance.yaml -w production-yy-mm-dd -d aws -verbose
 ## Deploy Stack to AWS
 
 Check list:
-- [ ] DNS names for barista and noctua point to public ip address on AWS Route 52. 
+- [ ] <b>DNS names for barista and noctua point to public ip address on AWS Route 53.</b> 
 - [ ] Location of SSH keys need to be replaced after copying config-stack.yaml.sample
 - [ ] Github credentials will need to be replaced in config-stack.yaml.sample
 - [ ] s3 credntials are placed in a file using format described above
@@ -95,6 +95,15 @@ The elastic public ip address shows up in the logs when deploying but it can als
 Point the noctua and barista DNS entries mentioned above to this ip address
 
 - Use `http://{public_ip}`
+
+## Debugging
+
+- ssh to machine  username is ubutu
+- docker-compose -f stage_dir/docker-compose-production.yaml ps
+- docker-compose -f stage_dir/docker-compose-production.yaml down # needed if you make any changes 
+- docker-compose -f stage_dir/docker-compose-production.yaml up -d
+- docker-compose -f stage_dir/docker-compose-production.yaml logs -f 
+
 
 ## Destroy Instance And Stack
 
