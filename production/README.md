@@ -24,7 +24,8 @@ minerva, barista, and noctua and it points to an external amigo instance.
 - Ansible. Tested using version 2.10.7
 
 ## Install Python deployment Script
-Note the script has a <b>-dry-run</b> option.
+Note the script has a <b>-dry-run</b> option. You can always copy the command and execute manually
+Useful to run the ansible playbooks. 
 
 ```
 >pip install go-deploy==0.3.0 # requires python >=3.8.5
@@ -91,18 +92,19 @@ go-deploy -c config-stack.yaml -w production-yy-mm-dd -d aws -verbose
 ```
 
 ## Access noctua from a browser
-The elastic public ip address shows up in the logs when deploying but it can also be found in production-yy-mm-dd.cfg
-Point the noctua and barista DNS entries mentioned above to this ip address
 
-- Use `http://{public_ip}`
+Check list:
+- [ ] noctua is up and healthy. We use health checks in docker compose file
+- [ ] Use noctua dns name. http://{noctua_host}
 
 ## Debugging
 
-- ssh to machine  username is ubutu
+- ssh to machine. username is ubuntu. Try using dns names to make sure they are fine
 - docker-compose -f stage_dir/docker-compose-production.yaml ps
-- docker-compose -f stage_dir/docker-compose-production.yaml down # needed if you make any changes 
+- docker-compose -f stage_dir/docker-compose-production.yaml down # whenever you make any changes 
 - docker-compose -f stage_dir/docker-compose-production.yaml up -d
 - docker-compose -f stage_dir/docker-compose-production.yaml logs -f 
+- Use -dry-run and copy and paste the command and execute it manually
 
 
 ## Destroy Instance And Stack
