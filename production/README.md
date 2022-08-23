@@ -20,9 +20,9 @@ minerva, barista, and noctua and it points to an external amigo instance.
   - docker-production-compose and various configuration files from template directory
 
 ## Requirements
-- Terraform
-- Ansible
-- 
+- Terraform. Tested using v1.1.4
+- Ansible. Tested using version 2.10.7
+
 ## Install Python deployment Script
 Note the script has a <b>-dry-run</b> option.
 
@@ -75,7 +75,7 @@ go-deploy -init -c config-instance.yaml -w production-yy-mm-dd -d aws -verbose
 ## Deploy Stack to AWS
 
 Check list:
-- [ ] <b>DNS names for barista and noctua point to public ip address on AWS Route 53.</b> 
+- [ ] <b>Make DNS names for barista and noctua point to public ip address on AWS Route 53.</b> 
 - [ ] Location of SSH keys need to be replaced after copying config-stack.yaml.sample
 - [ ] Github credentials will need to be replaced in config-stack.yaml.sample
 - [ ] s3 credntials are placed in a file using format described above
