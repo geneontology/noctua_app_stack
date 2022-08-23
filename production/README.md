@@ -19,6 +19,10 @@ minerva, barista, and noctua and it points to an external amigo instance.
   - github OAUTH client id and secret
   - docker-production-compose and various configuration files from template directory
 
+## Requirements
+- Terraform
+- Ansible
+- 
 ## Install Python deployment Script
 Note the script has a <b>-dry-run</b> option.
 
@@ -53,14 +57,12 @@ These are same as aws credentials but in a different format. See production/s3cf
 
 ## Provision AWS Instance
 
-Copy sample files backend.tf.sample and config-instance.yaml.sample.
-Here you just need to replace the location of the ssh keys in config-instance.yaml
-Note for the terraform worksapce we append the date. As an example we use production-yy-mm-dd
-
 Check list:
-- [ ] Replace ssh keys
-- [ ] Choose your workspace name
+- [ ] ssh keys
+- [ ] Choose your workspace name. We append the date. As an example we use production-yy-mm-dd
 - [ ] go-deploy python package has been installed
+- [ ] Remember you can use the -dry-run option
+- [ ] Execute the commands right below
 - [ ] Note down the ip address of the aws instance
 
 ```
@@ -70,15 +72,20 @@ go-deploy -init -c config-instance.yaml -w production-yy-mm-dd -d aws -verbose
 
 ```
 
-## Provision to AWS
+## Deploy Stack to AWS
 
-Copy sample files and modify as needed. For the terraform worksapce we append the date.
-As an example we use production-yy-mm-dd
+Check list:
+- [ ] DNS names for barista and noctua point to public ip address on AWS Route 52. 
+- [ ] Location of SSH keys need to be replaced after copying config-stack.yaml.sample
+- [ ] Github credentials will need to be replaced in config-stack.yaml.sample
+- [ ] s3 credntials are placed in a file using format described above
+- [ ] Location of blazegraph.jnl. This assumes you have generated the journal using steps above
+- [ ] Use same workspace name as in previous step
+- [ ] Remember you can use the -dry-run option
+- [ ] Optional When Testing: change dns names in the config file for noctua, barista, and golr. 
+- [ ] Execute the commands right below
 
 ```
-cp ./production/backend.tf.sample aws/backend.tf
-cp ./production/config-instance.yaml.sample config-instance.yaml
-go-deploy -init -c config-instance.yaml -w production-yy-mm-dd -d aws -verbose
 cp ./production/config-stack.yaml.sample config-stack.yaml
 go-deploy -c config-stack.yaml -w production-yy-mm-dd -d aws -verbose
 ```
