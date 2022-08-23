@@ -40,10 +40,35 @@ if you do not have a journal see production/gen_journal.sh.sample to generate on
 
 ## DNS 
 
-Use DNS records for noctua and barista. Once the stack is ready you would need to point these to elastic ip address of the stack,  
+Use DNS records for noctua and barista. Once the stack is ready you would need to point these to elastic ip address of the stack. For testing purposes you can use aes-test-barista.geneontology.io for barista and aes-test-noctua.geneontology.io for noctua. Once you deploy and have the public ip address got to AWS Route 52 and modify the A records to point to the public IP address
 
 ## Golr/Amigo
-Use the dns name of the external golr instance running alongside amigo
+Use the dns name of the external golr instance running alongside amigo. For testing pourposes you can just use noctua-golr.berkeleybop.org 
+
+## SSH Keys
+For testing purposes you can you your own ssh keys. But for production please ask for the go ssh keys.
+
+## S3 Credentials To Push Apache Logs 
+These are same as aws credentials but in a different format. See production/s3cfg.sample 
+
+## Provision AWS Instance
+
+Copy sample files backend.tf.sample and config-instance.yaml.sample.
+Here you just need to replace the location of the ssh keys in config-instance.yaml
+Note for the terraform worksapce we append the date. As an example we use production-yy-mm-dd
+
+Check list:
+- [ ] Replace ssh keys
+- [ ] Choose your workspace name
+- [ ] go-deploy python package has been installed
+- [ ] Note down the ip address of the aws instance
+
+```
+cp ./production/backend.tf.sample aws/backend.tf
+cp ./production/config-instance.yaml.sample config-instance.yaml
+go-deploy -init -c config-instance.yaml -w production-yy-mm-dd -d aws -verbose
+
+```
 
 ## Provision to AWS
 
