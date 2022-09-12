@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket  = "REPLACE_ME"
+    bucket  = "go-workspace-noctua"
     profile = "default"
     key     = "noctua_app_stack/terraform.tfstate"
     region  = "us-east-1"

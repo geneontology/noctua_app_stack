@@ -1,6 +1,6 @@
 ssh_keys:
-     public: /Users/REPLACE/SSH/go-ssh.pub
-     private: /Users/REPLACE_ME/SSH/go-ssh
+     public: REPLACE_ME
+     private: REPLACE_ME
 
 instance:
     tags:

@@ -19,7 +19,6 @@
       src: '{{ item.file }}'
       dest: '{{ stage_dir }}/{{ item.dir }}'
     with_items:
-      - { file: 'startup.yaml', dir: 'conf' }
       - { file: 'httpd.conf', dir: 'httpd-confs' }
 
   - name: Check if repo is staged
@@ -39,6 +38,11 @@
 
   - name: Handle production mode ...
     block:
+      - name: set urls that assume port 80
+        set_fact:
+         noctua_lookup_url: 'http://{{ noctua_host }}'
+         barista_lookup_url: 'http://{{ barista_lookup_host }}'
+
       - name: install production config from templates directory
         template:
           src: '{{ item.file }}'
@@ -48,6 +52,7 @@
           - { file: 'httpd-vhosts-prod-barista.conf', dir: 'httpd-confs' }
           - { file: 'httpd-vhosts-prod-noctua.conf', dir: 'httpd-confs' }
           - { file: 'github.yaml', dir: 'barista' }
+          - { file: 'startup.yaml', dir: 'conf' }
       - name: copy s3cfg
         copy:
           src: "{{ S3_CRED_FILE }}"
@@ -80,6 +85,7 @@
           - { file: 'httpd-vhosts-golr.conf', dir: 'httpd-confs' }
           - { file: 'httpd-vhosts-barista.conf', dir: 'httpd-confs' }
           - { file: 'httpd-vhosts-noctua.conf', dir: 'httpd-confs' }
+          - { file: 'startup.yaml', dir: 'conf' }
       - name: Check if index exists
         stat:
           path: '{{ stage_dir }}/srv-solr-data/index'
