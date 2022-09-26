@@ -1,0 +1,8 @@
+---
+###############
+# download ssl certs
+################
+USE_SSL: 0 
+S3_SSL_CERTS_LOCATION: REPLACE_ME 
+S3_SSL_CRED_FILE: REPLACE_ME
+

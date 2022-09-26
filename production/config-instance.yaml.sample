@@ -9,4 +9,5 @@ instance:
     open_ports:
        - 80
        - 22
+       - 443
     disk_size: 100 

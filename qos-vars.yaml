@@ -1,0 +1,11 @@
+---
+###############
+# download ssl certs
+################
+USE_QOS: 1 
+QS_ClientEntries 200000
+QS_SrvMaxConnPerIP: 50
+QS_ClientEventPerSecLimit: 150
+QS_ClientEventRequestLimit: 150
+QS_ClientEventBlockCount: "350 300"
+QS_ClientEventBlockExcludeIP: "9.9.9.9"

@@ -1,5 +1,6 @@
 # Noctua Production Deployment
 
+
 This repository enables the deployment of the noctua stack to AWS. It includes 
 minerva, barista, and noctua and it points to an external amigo instance.     
 
@@ -8,7 +9,9 @@ minerva, barista, and noctua and it points to an external amigo instance.
     - vars.yaml
     - docker-vars.yaml
     - s3-vars.yaml
+    - ssl-vars.yaml
     - stage.yaml
+    - qos-vars.yaml
     - start_services.yaml
   
 ## Artifacts Deployed To Staging directory On AWS:
@@ -16,6 +19,8 @@ minerva, barista, and noctua and it points to an external amigo instance.
   - Cloned repositories:
     - noctua-form, noctua-landing-page, noctua-models, go-site and noctua-visual-pathway-editor.
   - s3 credentials used to push apache logs to s3 buckets
+  - s3 credentials used to download ssl credentials from s3 buckets
+  - qos.conf and robots.txt for apache mitigation
   - github OAUTH client id and secret
   - docker-production-compose and various configuration files from template directory
 
@@ -79,7 +84,9 @@ Check list:
 - [ ] <b>Make DNS names for barista and noctua point to public ip address on AWS Route 53.</b> 
 - [ ] Location of SSH keys need to be replaced after copying config-stack.yaml.sample
 - [ ] Github credentials will need to be replaced in config-stack.yaml.sample
-- [ ] s3 credntials are placed in a file using format described above
+- [ ] s3 credentials are placed in a file using format described above
+- [ ] s3 uri if ssl is enabled. Location of ssl certs/key
+- [ ] qos mitigation if qos is enabled
 - [ ] Location of blazegraph.jnl. This assumes you have generated the journal using steps above
 - [ ] Use same workspace name as in previous step
 - [ ] Remember you can use the -dry-run option
