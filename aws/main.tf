@@ -20,6 +20,11 @@ variable "open_ports" {
   default = [22, 8090, 8080, 8983]
 }
 
+// custom ubuntu jammy ami with docker, docker-compose, aws, python, pip installed
+variable "ami" {
+  default = "ami-019eb5c97ad39d701"
+}
+
 provider "aws" {
   region = "us-east-1"
   shared_credentials_files = [ "~/.aws/credentials" ]
@@ -29,6 +34,7 @@ provider "aws" {
 module "base" {
   source = "git::https://github.com/geneontology/devops-aws-go-instance.git?ref=V2.0"
   instance_type = var.instance_type
+  ami = var.ami
   public_key_path = var.public_key_path
   tags = var.tags
   open_ports = var.open_ports

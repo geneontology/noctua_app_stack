@@ -18,8 +18,7 @@ minerva, barista, and noctua and it points to an external amigo instance.
   - blazegraph.jnl
   - Cloned repositories:
     - noctua-form, noctua-landing-page, noctua-models, go-site and noctua-visual-pathway-editor.
-  - s3 credentials used to push apache logs to s3 buckets
-  - s3 credentials used to download ssl credentials from s3 buckets
+  - s3 credentials used to push apache logs to s3 buckets and to download ssl credentials from s3 bucket
   - qos.conf and robots.txt for apache mitigation
   - github OAUTH client id and secret
   - docker-production-compose and various configuration files from template directory
@@ -33,7 +32,7 @@ Note the script has a <b>-dry-run</b> option. You can always copy the command an
 Useful to run the ansible playbooks. 
 
 ```
->pip install go-deploy==0.3.0 # requires python >=3.8.5
+>pip install go-deploy==0.4.1 # requires python >=3.8
 >go-deploy -h
 ```
 

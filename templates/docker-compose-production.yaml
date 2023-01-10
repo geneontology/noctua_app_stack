@@ -61,6 +61,7 @@ services:
       - {{ stage_dir }}/robots.txt:/var/www/html/robots.txt
       - {{ stage_dir }}/apache_logs:/var/log/apache2
       - {{ stage_dir }}/credentials:/opt/credentials
+      - {{ stage_dir }}/credentials/s3cfg:/root/.aws/config
     ports:
       - "80:80"
       - "443:443"
