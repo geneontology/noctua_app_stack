@@ -34,17 +34,12 @@
 
   - name: Handle production mode ...
     block:
-      - name: set urls that assume port 80
-        set_fact:
-         noctua_lookup_url: 'http://{{ noctua_host }}'
-         barista_lookup_url: 'http://{{ barista_lookup_host }}'
-
       - name: install production config from templates directory
         template:
           src: '{{ item.file }}'
           dest: '{{ stage_dir }}/{{ item.dir }}'
         with_items:
-          - { file: 'docker-compose-production.yaml', dir: '' }
+          - { file: 'docker-compose-production.yaml', dir: 'docker-compose.yaml' }
           - { file: 'httpd-vhosts-prod-barista.conf', dir: 'httpd-confs' }
           - { file: 'httpd-vhosts-prod-noctua.conf', dir: 'httpd-confs' }
           - { file: 'github.yaml', dir: 'barista' }

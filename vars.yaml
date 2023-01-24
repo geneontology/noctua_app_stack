@@ -40,7 +40,8 @@ host: REPLACE_ME
 barista_lookup_host: "{{ host }}"
 barista_lookup_host_alias: "{{ barista_lookup_host }}"
 barista_proxy_port: 8090
-barista_lookup_url: http://{{ barista_lookup_host }}:{{ barista_proxy_port }}
+barista_protocol: http
+barista_lookup_url: '{{ barista_protocol }}://{{ barista_lookup_host }}:{{ barista_proxy_port }}'
 
 ###
 # Noctua Access Port from Browser
@@ -50,14 +51,16 @@ barista_lookup_url: http://{{ barista_lookup_host }}:{{ barista_proxy_port }}
 noctua_host: "{{ host }}"
 noctua_host_alias: "{{ noctua_host }}"
 noctua_proxy_port: 8080
-noctua_lookup_url: http://{{ noctua_host }}:{{ noctua_proxy_port }}
+noctua_protocol: http
+noctua_lookup_url: '{{ noctua_protocol }}://{{ noctua_host }}:{{ noctua_proxy_port }}'
 
 #####
 ## GOLR.
 #########
 golr_host: "{{ host }}" 
 golr_lookup_port: 8983  
-golr_lookup_url: http://{{ golr_host }}:{{ golr_lookup_port }}/solr
+golr_protocol: http
+golr_lookup_url: '{{ golr_protocol }}://{{ golr_host }}:{{ golr_lookup_port }}/solr'
 golr_neo_lookup_url: '{{ golr_lookup_url}}'
 golr_labels_url: '{{ golr_lookup_url }}' 
 

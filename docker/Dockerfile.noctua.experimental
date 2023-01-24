@@ -1,0 +1,39 @@
+ARG noctua_base_image=node:8-slim
+  
+FROM node:8-slim AS builder
+
+RUN apt-get update \
+    && apt-get install -y build-essential python \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build_dir
+COPY ./package.json  /build_dir/
+COPY ./package-lock.json /build_dir/
+
+RUN npm install
+
+COPY ./ /build_dir
+RUN cp config/startup.yaml.stack-dev startup.yaml \
+    && ./node_modules/.bin/gulp build
+
+# FROM ${noctua_base_image}
+FROM ubuntu:18.04
+
+RUN apt-get update \
+    && apt-get install -y curl sudo
+RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+RUN apt-get install -y nodejs
+
+ARG uid=1100
+ARG gid=1100
+
+WORKDIR /app
+
+RUN groupadd -g ${gid} gunicorn \
+    && useradd -o -u ${uid} -g ${gid} -c 'Gunicorn User' --no-create-home gunicorn \
+    && chown -R gunicorn:gunicorn /app
+
+COPY --chown=${uid}:${gid} --from=builder /build_dir  /app
+
+USER gunicorn

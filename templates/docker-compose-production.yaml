@@ -23,6 +23,8 @@ services:
     image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-barista
     init: true
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     restart: unless-stopped
     healthcheck:
        test: wget --no-verbose --timeout=5 --tries=5 --spider http://barista:3400 || kill 1
@@ -41,6 +43,8 @@ services:
     image: '{{ docker_hub_user }}/noctua:{{ tag }}'
     command: ./node_modules/.bin/gulp run-noctua
     init: true
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     restart: unless-stopped
     healthcheck:
        test: wget --no-verbose --timeout=5 --tries=5 --spider http://noctua:8910 || kill 1
