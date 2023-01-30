@@ -12,7 +12,7 @@ variable "disk_size" {
 }
 
 variable "public_key_path" {
-  default = "~/.ssh/id_rsa.pub"
+  default = "/tmp/go-ssh.pub"
 }
 
 variable "open_ports" {
@@ -27,7 +27,7 @@ variable "ami" {
 
 provider "aws" {
   region = "us-east-1"
-  shared_credentials_files = [ "~/.aws/credentials" ]
+  shared_credentials_files = [ "/tmp/go-aws-credentials" ]
   profile = "default"
 }
 
