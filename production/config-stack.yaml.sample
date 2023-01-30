@@ -10,7 +10,7 @@ stack:
      tag: v2 
 
      S3_CRED_FILE: /tmp/go-aws-credentials
-     S3_BUCKET: REPLACE_ME_CERT_BUCKET
+     S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET
 
      USE_QOS: 1
      QS_ClientEventBlockCount: "350 300"
