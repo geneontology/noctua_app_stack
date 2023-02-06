@@ -10,7 +10,7 @@ services:
       GOLR_LABELS: "{{ golr_labels_url }}"
     volumes:
       - {{ stage_dir }}:/var/minerva
-    image: '{{ docker_hub_user }}/minerva:{{ tag }}'
+    image: 'geneontolgy/minerva:{{ minerva_tag }}'
     init: true
     restart: unless-stopped
 
@@ -20,7 +20,7 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    image: '{{ docker_hub_user }}/noctua:{{ noctua_tag }}'
     command: ./node_modules/.bin/gulp run-barista
     init: true
     environment:
@@ -40,7 +40,7 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    image: 'geneontolgy/noctua:{{ noctua_tag }}'
     command: ./node_modules/.bin/gulp run-noctua
     init: true
     environment:

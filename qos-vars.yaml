@@ -8,7 +8,7 @@ USE_QOS: 1
 QS_ClientEntries: 200000
 
 # Maximum number of connections allowed per IP, to server across all virtual hosts
-QS_SrvMaxConnPerIP: 10
+QS_SrvMaxConnPerIP: 20
 
 # Maximum requests allowed to / per second, per IP address
 QS_ClientEventPerSecLimit: 10

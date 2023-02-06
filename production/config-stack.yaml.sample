@@ -6,8 +6,6 @@ stack:
    vars:
      stage_dir: /home/ubuntu/stage_dir
      PROD_MODE: 1 
-     docker_hub_user: geneontology
-     tag: v2 
 
      S3_CRED_FILE: /tmp/go-aws-credentials
      S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET
