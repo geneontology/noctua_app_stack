@@ -75,10 +75,19 @@
         copy:
           src: "files/robots.txt"
           dest: "{{ stage_dir }}/robots.txt"
+
+      - name: Check if journal exists 
+        stat:
+          path: '{{ stage_dir }}/blazegraph.jnl'
+          get_checksum: False
+          get_md5: False
+        register: journal_result 
+
       - name: copy blazegraph.jnl 
         copy:
           src: "{{ BLAZEGRAPH_JOURNAL }}"
           dest: "{{ stage_dir }}/blazegraph.jnl"
+        when: not journal_result.stat.exists
     when: PROD_MODE | bool
 
   - name: Handle non production mode ...
