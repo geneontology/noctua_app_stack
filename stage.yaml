@@ -3,6 +3,8 @@
   - vars.yaml
   - docker-vars.yaml
   - s3-vars.yaml
+  - ssl-vars.yaml
+  - qos-vars.yaml
 
   tasks:
   - name: Create stage directories
@@ -13,13 +15,7 @@
       - conf
       - barista
       - httpd-confs
-
-  - name: install configs from templates directory
-    template:
-      src: '{{ item.file }}'
-      dest: '{{ stage_dir }}/{{ item.dir }}'
-    with_items:
-      - { file: 'httpd.conf', dir: 'httpd-confs' }
+      - credentials
 
   - name: Check if repo is staged
     stat:
@@ -38,33 +34,60 @@
 
   - name: Handle production mode ...
     block:
-      - name: set urls that assume port 80
-        set_fact:
-         noctua_lookup_url: 'http://{{ noctua_host }}'
-         barista_lookup_url: 'http://{{ barista_lookup_host }}'
-
       - name: install production config from templates directory
         template:
           src: '{{ item.file }}'
           dest: '{{ stage_dir }}/{{ item.dir }}'
         with_items:
-          - { file: 'docker-compose-production.yaml', dir: '' }
+          - { file: 'docker-compose-production.yaml', dir: 'docker-compose.yaml' }
           - { file: 'httpd-vhosts-prod-barista.conf', dir: 'httpd-confs' }
           - { file: 'httpd-vhosts-prod-noctua.conf', dir: 'httpd-confs' }
           - { file: 'github.yaml', dir: 'barista' }
           - { file: 'startup.yaml', dir: 'conf' }
+
+      - name: install ssl configs from templates directory
+        template:
+          src: '{{ item.file }}'
+          dest: '{{ stage_dir }}/{{ item.dir }}'
+        with_items:
+          - { file: 'httpd-vhosts-prod-barista-ssl.conf', dir: 'httpd-confs' }
+          - { file: 'httpd-vhosts-prod-noctua-ssl.conf', dir: 'httpd-confs' }
+        when: USE_SSL | bool
+
+      - name: install qos config from templates directory
+        template:
+          src: qos.conf
+          dest: '{{ stage_dir }}/qos.conf'
+        when: USE_QOS | bool
+
       - name: copy s3cfg
         copy:
           src: "{{ S3_CRED_FILE }}"
-          dest: "{{ stage_dir }}/s3cfg"
+          dest: "{{ stage_dir }}/credentials/s3cfg"
+
+      - name: copy noop qos.conf 
+        copy:
+          src: "files/qos-noop.conf"
+          dest: '{{ stage_dir }}/qos.conf'
+        when: not USE_QOS | bool
+
       - name: copy robots.txt 
         copy:
           src: "files/robots.txt"
-          dest: "{{ stage_dir }}/httpd-confs/robots.txt"
+          dest: "{{ stage_dir }}/robots.txt"
+
+      - name: Check if journal exists 
+        stat:
+          path: '{{ stage_dir }}/blazegraph.jnl'
+          get_checksum: False
+          get_md5: False
+        register: journal_result 
+
       - name: copy blazegraph.jnl 
         copy:
           src: "{{ BLAZEGRAPH_JOURNAL }}"
           dest: "{{ stage_dir }}/blazegraph.jnl"
+        when: not journal_result.stat.exists
     when: PROD_MODE | bool
 
   - name: Handle non production mode ...

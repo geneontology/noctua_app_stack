@@ -1,12 +1,13 @@
 ssh_keys:
-     public: REPLACE_ME
-     private: REPLACE_ME
+     public: /tmp/go-ssh.pub
+     private: /tmp/go-ssh
 
 instance:
     tags:
-       Name: noctua_stack
-    instance_type: t2.large
+       Name: amigo_noctua_stack
+    instance_type: t2.xlarge
     open_ports:
        - 80
        - 22
+       - 443
     disk_size: 100 

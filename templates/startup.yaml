@@ -13,11 +13,11 @@ GOLR_LOOKUP_URL:
 GOLR_NEO_LOOKUP_URL:
   comment: The public location of the NEO GOlr server to ask information from for autocomplete, etc.
   type: url
-  value: {{ golr_neo_lookup_url }}
+  value: {{ golr_lookup_url }}
 GOLR_LOCATION:
   comment: The actual unprotected location of the GOlr server to load to (if different from GOLR_LOOKUP_URL).
   type: url
-  value: http://golr-aux.geneontology.io/solr/
+  value: {{ golr_lookup_url }}
 BARISTA_LOOKUP_URL:
   comment: Define where Noctua looks for Barista.
   type: url

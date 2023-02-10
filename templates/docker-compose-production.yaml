@@ -10,7 +10,7 @@ services:
       GOLR_LABELS: "{{ golr_labels_url }}"
     volumes:
       - {{ stage_dir }}:/var/minerva
-    image: '{{ docker_hub_user }}/minerva:{{ tag }}'
+    image: 'geneontology/minerva:{{ minerva_tag }}'
     init: true
     restart: unless-stopped
 
@@ -20,9 +20,11 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    image: 'geneontology/noctua:{{ noctua_tag }}'
     command: ./node_modules/.bin/gulp run-barista
     init: true
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     restart: unless-stopped
     healthcheck:
        test: wget --no-verbose --timeout=5 --tries=5 --spider http://barista:3400 || kill 1
@@ -38,9 +40,11 @@ services:
     volumes:
       - {{ stage_dir }}:/stage_dir
       - {{ stage_dir }}/conf/startup.yaml:/app/startup.yaml
-    image: '{{ docker_hub_user }}/noctua:{{ tag }}'
+    image: 'geneontology/noctua:{{ noctua_tag }}'
     command: ./node_modules/.bin/gulp run-noctua
     init: true
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     restart: unless-stopped
     healthcheck:
        test: wget --no-verbose --timeout=5 --tries=5 --spider http://noctua:8910 || kill 1
@@ -56,17 +60,20 @@ services:
     container_name: apache_noctua
     image: {{ apache_proxy_image }}
     volumes:
-      - {{ stage_dir }}/httpd-confs/httpd-vhosts-prod-noctua.conf:/etc/apache2/sites-enabled/httpd-vhosts-noctua.conf
-      - {{ stage_dir }}/httpd-confs/httpd-vhosts-prod-barista.conf:/etc/apache2/sites-enabled/httpd-vhosts-barista.conf
-      - {{ stage_dir }}/httpd-confs/robots.txt:/var/www/html/robots.txt
+      - {{ stage_dir }}/httpd-confs:/etc/apache2/sites-enabled
+      - {{ stage_dir }}/qos.conf:/etc/apache2/mods-enabled/qos.conf
+      - {{ stage_dir }}/robots.txt:/var/www/html/robots.txt
       - {{ stage_dir }}/apache_logs:/var/log/apache2
-      - {{ stage_dir }}/s3cfg:/opt/credentials/s3cfg
+      - {{ stage_dir }}/credentials:/opt/credentials
+      - {{ stage_dir }}/credentials/s3cfg:/root/.aws/config
     ports:
-      - "{{ noctua_proxy_port }}:80"
+      - "80:80"
+      - "443:443"
     environment:
-      - USE_S3=1
       - S3_PATH={{ S3_PATH }}/noctua
       - S3_BUCKET={{ S3_BUCKET }}
+      - USE_SSL={{ USE_SSL }}
+      - S3_SSL_CERTS_LOCATION={{ S3_SSL_CERTS_LOCATION }}
     init: true
     restart: unless-stopped
     depends_on:
