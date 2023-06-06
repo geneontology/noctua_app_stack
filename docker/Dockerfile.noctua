@@ -21,9 +21,11 @@ RUN cp config/startup.yaml.stack-dev startup.yaml \
 FROM ubuntu:18.04
 
 RUN apt-get update \
-    && apt-get install -y curl sudo
+    && apt-get install -y curl wget sudo
 RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-RUN apt-get install -y nodejs
+RUN apt-get install -y nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG uid=1100
 ARG gid=1100
