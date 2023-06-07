@@ -14,6 +14,8 @@ stack:
      QS_ClientEventBlockCount: "350 300"
      QS_ClientEventBlockExcludeIP: "9.9.9.9"
 
+     minerva_java_opts: "-Xmx8G"
+
      USE_SSL: 1
      S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz
 
