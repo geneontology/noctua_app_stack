@@ -81,6 +81,8 @@ WORKBENCHES:
   type: list
   value:
     - '/stage_dir/noctua-form/workbenches'
+    - '/stage_dir/noctua-visual-pathway-editor/workbenches'
+    - '/stage_dir/noctua-alliance-pathway-preview/workbenches'
     - '/stage_dir/noctua-landing-page/workbenches'
     - 'workbenches'
 ## Minerva operations preferences.

@@ -11,7 +11,8 @@ stack:
      S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET
 
      USE_QOS: 1
-     QS_ClientEventBlockCount: "350 300"
+     QS_ClientEventBlockCount: 350 
+     QS_ClientEventBlockCountSeconds: 300
      QS_ClientEventBlockExcludeIP: "9.9.9.9"
 
      minerva_java_opts: "-Xmx8G"
@@ -21,18 +22,20 @@ stack:
 
      BLAZEGRAPH_JOURNAL: REPLACE_ME
 
+     # HTTP OR HTTPS
      noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io
      noctua_lookup_url: REPLACE_ME # http://aes-test-noctua.geneontology.io
 
 
      # HTTP OR HTTPS
-     barista_protocol: https
      github_client_id: 'REPLACE_ME'
      github_client_secret: 'REPLACE_ME'
-
      github_callback_url: REPLACE_ME # https://aes-test-barista.geneontology.io/auth/github/callback
+
+     # HTTP OR HTTPS
      golr_lookup_url: REPLACE_ME # https://aes-test-golr.geneontology.io/solr
 
+     # HTTP OR HTTPS
      barista_lookup_host: REPLACE_ME # aes-test-barista.geneontology.io
      barista_lookup_url: REPLACE_ME # https://aes-test-barista.geneontology.io
    scripts: [ stage.yaml, start_services.yaml]
