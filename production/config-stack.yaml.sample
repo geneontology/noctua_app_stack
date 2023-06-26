@@ -27,7 +27,8 @@ stack:
 
      # HTTP OR HTTPS
      noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io
-     noctua_lookup_url: REPLACE_ME # http://aes-test-noctua.geneontology.io
+     noctua_lookup_url: REPLACE_ME # https://golr-aux.geneontology.io/solr/
+     golr_neo_lookup_url: REPLACE_ME # http://aes-test-noctua.geneontology.io
 
 
      # HTTP OR HTTPS

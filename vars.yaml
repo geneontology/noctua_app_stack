@@ -62,7 +62,7 @@ golr_host: "{{ host }}"
 golr_lookup_port: 8983  
 golr_protocol: http
 golr_lookup_url: '{{ golr_protocol }}://{{ golr_host }}:{{ golr_lookup_port }}/solr'
-golr_neo_lookup_url: '{{ golr_lookup_url}}'
+golr_neo_lookup_url: '{{ golr_lookup_url }}'
 golr_labels_url: '{{ golr_lookup_url }}' 
 
 
