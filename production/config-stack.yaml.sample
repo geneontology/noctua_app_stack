@@ -13,14 +13,17 @@ stack:
      USE_QOS: 1
      QS_ClientEventBlockCount: 350 
      QS_ClientEventBlockCountSeconds: 300
-     QS_ClientEventBlockExcludeIP: "9.9.9.9"
+     QS_ClientEventBlockExcludeIP: "8.8.8.8 9.9.9.9"
 
-     minerva_java_opts: "-Xmx8G"
+     minerva_java_opts: "-Xmx24G"
 
      USE_SSL: 1
      S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz
-
-     BLAZEGRAPH_JOURNAL: REPLACE_ME
+     
+     
+     # download or create journal locally and specify full path here.
+     # cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
+     BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH # /tmp/blazegraph-20230611.jnl
 
      # HTTP OR HTTPS
      noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io

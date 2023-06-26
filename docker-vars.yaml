@@ -8,10 +8,10 @@ repo_map:
    amigo: master
 
 tag: latest 
-minerva_tag: v2
+minerva_tag: v3
 
 # Ubuntu based image
 noctua_tag: v4
 
 docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
-apache_proxy_image: geneontology/apache-proxy:v4
+apache_proxy_image: geneontology/apache-proxy:v5
