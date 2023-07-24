@@ -4,8 +4,8 @@ ssh_keys:
 
 instance:
     tags:
-       Name: amigo_noctua_stack
-    instance_type: t2.xlarge
+       Name: REPLACE_ME 
+    instance_type: t2.2xlarge
     open_ports:
        - 80
        - 22
