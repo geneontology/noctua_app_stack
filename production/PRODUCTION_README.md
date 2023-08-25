@@ -33,16 +33,16 @@ minerva, barista, and noctua and it points to an external amigo instance.
 
 The instructions in this document are run from the POV that we're working with this developement environment; i.e.:
 ```
-docker run --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.1  /bin/bash
+docker run --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
 git clone https://github.com/geneontology/noctua_app_stack.git
 ```
 
-## Install Python deployment Script
+## Install Python deployment Script (skip if using dev environment)
 Note the script has a <b>-dry-run</b> option. You can always copy the command and execute manually
 Useful to run the ansible playbooks. 
 
 ```
->pip install go-deploy==0.4.1 # requires python >=3.8
+>pip install go-deploy==0.4.2 # requires python >=3.8
 >go-deploy -h
 ```
 
@@ -59,7 +59,11 @@ if you do not have a journal see production/gen_journal.sh.sample to generate on
 
 ## DNS 
 
-DNS records are used for noctua and barista. Once the instance has been provisioned, you would need to point these to elastic ip of the VM. For testing purposes you can use aes-test-barista.geneontology.io for barista and aes-test-noctua.geneontology.io for noctua. Once you deploy and have the public ip address go to AWS Route 52 and modify the A records to point to the public IP address
+Note: DNS records are used for noctua and barista. The tool would create them during create phase and destroy them during destroy phase. See `dns_record_name` in the instance config file, ` noctua_host` and `barista_lookup_host` in the stack config file.
+
+The aliases `noctua_host_alias` and `barista_lookup_host_alias` should be FQDN of an EXISTING DNS record. This reccord should NOT be managed by the tool otherwise the tool would delete them during the destroy phase.
+
+Once the instance has been provisioned and tested, this DNS record would need to be updated manually to point to the public ip address of the vm.
 
 ## Golr/Amigo
 Use the dns name of the external golr instance running alongside amigo. For testing pourposes you can just use aes-test-golr.geneontology if you have deployed the amigo/golr stack or noctua-golr.berkeleybop.org if it is up and running. 
@@ -124,25 +128,29 @@ Check list:
 <b>Command set</b>:
 ```
 cp ./production/config-instance.yaml.sample config-instance.yaml
-cat ./config-instance.yaml   # Verify contents and modify if needed.
+cat ./config-instance.yaml   # Verify contents and modify as needed.
+
+# Deploy command.
 go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose --conf config-instance.yaml
 
-# The previous command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
+# Display the terraform state
+go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -show
+
+# Display the public ip address of the aws instance. 
+go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -output
+
+#Useful Information When Debugging.
+# The deploy command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
 cat production-YYYY-MM-DD.tfvars.json
 
-# The previous command creates a ansible inventory file.
+# The Deploy command creates a ansible inventory file.
 cat production-YYYY-MM-DD-inventory.cfg
-
-# Useful terraform commands to check what you have just done
-terraform -chdir=aws workspace show   # current terraform workspace
-terraform -chdir=aws show             # current state deployed ...
-terraform -chdir=aws output           # public ip of aws instance
 ```
 
 ## Deploy Stack to AWS
 
 Check list:
-- [ ] <b>Make DNS names for barista and noctua point to public ip address on AWS Route 53.</b> 
+- [ ] Check that DNS names for noctua and barista map point to public ip address on AWS Route 53.
 - [ ] Location of SSH keys may need to be replaced after copying config-stack.yaml.sample
 - [ ] Github credentials will need to be replaced in config-stack.yaml.sample
 - [ ] s3 credentials are placed in a file using format described above
@@ -167,7 +175,7 @@ go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose --c
 
 Check list:
 - [ ] noctua is up and healthy. We use health checks in docker compose file
-- [ ] Use noctua dns name. http://{noctua_host}
+- [ ] Use noctua dns name. http://{noctua_host} or https://{noctua_host} if ssl is enabled. 
 
 ## Debugging
 
@@ -181,28 +189,23 @@ Check list:
 ## Destroy Instance and Delete Workspace.
 
 ```sh
-# Make sure you pointing to the correct workspace before destroying the stack.
-terraform -chdir=aws workspace list
-terraform -chdir=aws workspace select <name_of_workspace>
-terraform -chdir=aws workspace show # shows the name of current workspace
-terraform -chdir=aws show           # shows the state you are about to destroy
-terraform -chdir=aws destroy        # You would need to type Yes to approve.
+Make sure you are deleting the correct workspace.
+go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -show
 
-# Now delete workspace.
-terraform -chdir=aws workspace select default # change to default workspace
-terraform -chdir=aws workspace delete <name_of_workspace>  # delete workspace.
+# Destroy.
+go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -destroy
 ```
 
 ## Appendix I: Development Environment
 
 ```
 # Start docker container `go-dev` in interactive mode.
-docker run --rm --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.1  /bin/bash
+docker run --rm --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
 
 # In the command above we used the `--rm` option which means the container will be deleted when you exit. If that is not
 # the intent and you want delete it later at your own convenience. Use the following `docker run` command.
 
-docker run --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.1  /bin/bash
+docker run --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
 
 # Exit or stop the container.
 docker stop go-dev  # stop container with the intent of restarting it. This equivalent to `exit` inside the container

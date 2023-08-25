@@ -6,6 +6,12 @@ instance:
     tags:
        Name: REPLACE_ME 
     instance_type: t2.2xlarge
+    use_elastic_ip: True
+
+    # LIST OF DNS type A records to create.
+    dns_record_name: [ "REPLACE_ME_FQDN_FOR_NOCTUA", "REPLACE_ME_FQDN_FOR_BARISTA" ]
+    dns_zone_id: "REPLACE_ME_FOR_DNS_ZONE_ID"
+
     open_ports:
        - 80
        - 22

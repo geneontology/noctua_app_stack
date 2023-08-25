@@ -25,6 +25,10 @@ minerva_java_opts: "-Xmx4G"
 # Golr Index
 PROD_MODE: 0 
 #####
+#
+# 
+USE_CLOUDFLARE: 0
+
 ###############
 # Barista Local Authentication.
 ##############

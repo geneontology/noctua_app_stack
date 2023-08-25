@@ -14,4 +14,4 @@ minerva_tag: v3
 noctua_tag: v4
 
 docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
-apache_proxy_image: geneontology/apache-proxy:v5
+apache_proxy_image: geneontology/apache-proxy:v6
