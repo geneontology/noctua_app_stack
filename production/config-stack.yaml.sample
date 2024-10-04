@@ -25,6 +25,7 @@ stack:
      
      # download or create journal locally and specify full path here.
      # cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
+     # see production/gen_journal.sh.sample to generate one
      BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH # /tmp/blazegraph-20230611.jnl
 
      # HTTP OR HTTPS
