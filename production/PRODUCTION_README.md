@@ -1,8 +1,8 @@
 # Noctua Production Deployment
 
 
-This repository enables the deployment of the noctua stack to AWS. It includes 
-minerva, barista, and noctua and it points to an external amigo instance. 
+This repository enables the deployment of the noctua stack to AWS. It includes minerva, barista, and noctua and it points to an external amigo instance. The architecture is designed so that the components that make up the system can easily be provisioned, instantiated and deployed. When it is time for the system to be destroyed, all subsystems should be removed.    
+
 
  ## Conventions
  Creating and deploying instances on aws involves the creation of multiple artifacts in Route53, EC2, S3...  In order to easily identify all artifacts associated with a workspace instance, a naming convention is utilized.  This allows for easy deletion when a workspace needs to be taken down.   Geneontology dev-ops follows a namespace pattern for workspaces. it is `go-workspace-_______`.  For noctua, it is `go-workspace-noctua`.  Similarly, for the workspace instance, it is namespace pattern `_____-production-YYYY-MM-DD`; e.g.: `graphstore-production-2024-08-26` or `go-api-production-2023-01-30`.  For noctua, it will be `noctua-production-YYYY-MM-DD` or `___-noctua-test-YYYY-MM-DD` where `___` should be replaced with yourr initials.  The details about the workspace instance will be stored in the S3 buckets under `go-workspace-noctua`.
@@ -24,15 +24,21 @@ Login into aws and view the S3 buckets information.  Drill down by selecting 'go
 
 6.  Determine the workspace namespace pattern.  If this is for testing purposes, the workspace name should have your initials and the label 'test' as part of its name. For example, for testing, aes-noctua-test-2024-10-02 or for production,  noctua-production-2024-10-02.  The namespace will be used multiple times, to make things easier and more imporatantly, to prevent creating actual instances with labels containing `YYYYY-MM-DD`, open up a text editor and enter the namespace.
 
- In addition to noctua, other instances will also be created.  These instances should also follow the namespace pattern:
-| Instance   |  production namespace                          | test namespace                                       |
-| -------    | -----------------------------------------------| -----------------------------------------------------|
-| noctua     | noctua-production-YYYY-MM-DD.geneontology.org  | ___-noctua-test-YYYY-MM-DD.geneontology.io           |
-| barista    | barista-production-YYYY-MM-DD.geneontology.org | ___-barista-test-YYYY-MM-DD.geneontology.io          |
-| golr       | golr-production-YYYY-MM-DD.geneontology.org    | ___-golr-test-YYYY-MM--DD.geneontology.io            |
-
+ In addition to noctua, other instances and artifacts will also be created.  These should also follow the namespace pattern:
+|Item    | Artifact           |  production                                               | test                                                  |
+|----    | -------            | ------------------------------------------------          | ------------------------------------------------------|
+|6a      | noctua bucket      | go-workspace-noctua                                       | go-workspace-noctua                                   |
+|6b      | certificate url    | s3://go-service-lockbox/geneontology.orrg.tar.gz          | s3://go-service-lockbox/geneontology.io.tar.gz        |
+|6c      | workspace name     | noctua-production-YYYY-MM-DD                              | ___-noctua-test-YYYY-MM-DD                            |
+|6d      | noctua             | noctua-production-YYYY-MM-DD.geneontology.org             | ___-noctua-test-YYYY-MM-DD.geneontology.io            |
+|6e      | barista            | barista-production-YYYY-MM-DD.geneontology.org            | ___-barista-test-YYYY-MM-DD.geneontology.io           |
+|6f      | current noctua url | http://noctua.geneontology.org                            | http://noctua.geneontology.io                         |
+|6g      | noctua/golr lookup | https://golr-aux.geneontology.org/solr/                   | https://golr-aux.geneontology.io/solr/                |
+|6h      | barista host       | barista.geneontology.org                                  | barista.geneontology.io                               |
+|6i      | barista url        | barista-production-YYYY-MM-DD.geneontology.org            | https://___-barista-test-YYYY-MM-DD.geneontology.io   |
  
- 
+Both production and testing will execute a command to initialize the workspace:
+go-deploy -init --working-directory aws -verbose 
  
 The workspace name will be used to instantiate, deploy and destroy.  The 3 commands are as follows:
 For production
@@ -40,7 +46,7 @@ For production
     - go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
     - go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -destroy
 
-The deploy command can be tested before instantiation with the 'dry-run' option:  
+The instantiate and deploy commands can be tested before instantiation with the 'dry-run' option:  
     - go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -dry-run  --conf config-stack.yaml
    
 The instance name of the server will be noctua-production-YYYY-MM-DD.geneontology.org
@@ -122,14 +128,14 @@ emacs /tmp/go-aws-credentials
 export AWS_SHARED_CREDENTIALS_FILE=/tmp/go-aws-credentials
 ```
 
-### 3.  Add an entry in the aws s3 for storing information about the workspace being created and initialize
-Update entry for bucket  = `REPLACE_ME_NOCTUA_TERRAFORM_BUCKET` to "go-workspace-noctua"
+### 3.  Add an entry in the aws s3 for storing information about the workspace instance and initialize
+Update entry for bucket  = `REPLACE_ME_NOCTUA_TERRAFORM_BUCKET` to "go-workspace-noctua" (Item 6a)
 ```
 cp ./production/backend.tf.sample ./aws/backend.tf
 emacs ./aws/backend.tf
 ```
 
-Initialize and list buckets
+Initialize working directory for workspace and list workspace buckets
 ```
 go-deploy -init --working-directory aws -verbose
 go-deploy --working-directory aws -list-workspaces -verbose
@@ -138,8 +144,8 @@ go-deploy --working-directory aws -list-workspaces -verbose
 
 ### 4. Update configuration file to instantiate instance on aws
 
-Name: REPLACE_ME should be "noctua-production-YYYY-MM-DD" or ___-noctua-test-YYYY-MM--DD - see Prerequisites 6 for exact text
-dns_record_name: should be ["noctua-production-YYYY-MM-DD.geneontology.org", "barista-production-YYYY-MM-DD.geneontology.org"] or ["___-noctua-test-YYYY-MM-DD.geneontology.io", "___-barista-test-YYYY-MM-DD.geneontology.io"]- see Prerequisites 6 for exact text
+Name: REPLACE_ME should be "noctua-production-YYYY-MM-DD" or ___-noctua-test-YYYY-MM--DD - see Prerequisites 6 (Item 6c) for exact text
+dns_record_name: should be ["noctua-production-YYYY-MM-DD.geneontology.org", "barista-production-YYYY-MM-DD.geneontology.org"] or ["___-noctua-test-YYYY-MM-DD.geneontology.io", "___-barista-test-YYYY-MM-DD.geneontology.io"]- see Prerequisites 6 (Item 6d, 6e) for exact text
 dns_zone_id: should be `Z04640331A23NHVPCC784` for geneontology.org or `Z1SMAYFNVK75BZ` for geneontology.io 
 
 ```
@@ -148,7 +154,8 @@ emacs config-instance.yaml
 ```
 
 ### 5.  Test and Instantiate instance on aws
-Test the deployment.  From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 and run
+Test the deployment.  From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 (Item 6c) and run
+
 ```
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -dry-run --conf config-instance.yaml
 ```
@@ -158,73 +165,101 @@ From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something 
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-instance.yaml
 ```
 
+Note, IP address of the EC2 instance.  
+
 Optional, but useful commands
-List workspaces to ensure one has been created for `noctua-production-YYYY-MM-DD`
+List workspaces to ensure one has been created
 ```
 go-deploy --working-directory aws -list-workspaces -verbose
 
-# Display the terraform state
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
+# Display the terraform state. Replace as specified in Prerequisites 6 (Item 6c)
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -show
 
-# Display the public ip address of the aws instance 
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -output
+# Display the public ip address of the aws instance.  Update command as specified in Prerequisites 6 (Item 6c)
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -output
 
-#Useful Information When Debugging.
+#Useful Information When Debugging. Replace as specified in Prerequisites 6 (Item 6c)
 # The deploy command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
-cat noctua-production-YYYY-MM-DD.tfvars.json
+cat REPLACE_ME_WITH_S3_WORKSPACE_NAME.tfvars.json
 
-# The Deploy command creates a ansible inventory file.
-cat noctua-production-YYYY-MM-DD-inventory.cfg
+# The Deploy command creates a ansible inventory file. Replace as specified in Prerequisites 6 (Item 6c)
+cat REPLACE_ME_WITH_S3_WORKSPACE_NAME-inventory.cfg
 ```
 
-This can also be validated by logging into aws and viewing the s3 bucket for 'go-workspace-noctua'.  There will be an entry for `noctua-production-YYYY-MM-DD`.  Drill down and view Terraform details.  There will be a running instance of `noctua-production-YYYY-MM-DD` under EC2 instances.  Route 53 hosted instances for 'geneontology.org' will have 'A' records for both  `noctua-production-YYYY-MM-DD` and 'barista-production-YYYY-MM-DD.geneontology.org'
+This can also be validated by logging into aws and viewing the s3 bucket for 'go-workspace-noctua'.  There will be an entry for the workspace instance name.  Drill down and view Terraform details.  There will be a running instance under EC2 instances.  Route 53 hosted instances for 'geneontology.org' or 'geneontology.io' will have 'A' records for both  noctua and barista
 
 
-Now that an instance has been created, you can login into the instance with the instance name or IP address
+Now that an instance has been created, you can login into the instance with the instance name or IP address.  Replace host name as specified in Prerequisites 6 (Item 6d)
 ```
-ssh -i /tmp/go-ssh ubuntu@noctua-production-YYYY-MM-DD.geneontology.org
+ssh -i /tmp/go-ssh ubuntu@noctua-production-YYYY-MM-DD.geneontology.org or ssh -i /tmp/go-ssh ubuntu@ ___-noctua-test-YYYY-MM-DD.geneontology.io 
 logout
 ```
 
 
-##### 6.  Update configuration files to deploy on aws
+### 6.  Update configuration files to deploy on aws
 Modify the stack configuration file as follows:
- - `S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET` should be `S3_BUCKET: go-service-logs-noctua-production` or `S3_BUCKET: go-service-logs-noctua-test` for test instance
+ - `S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET` This should be `S3_BUCKET: go-service-logs-noctua-production` for production or `S3_BUCKET: go-service-logs-noctua-test` for test instance
  - `USE_QOS: 0` should be `USE_QOS: 1`
- - `S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz` should be `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.org.tar.gz`
+ - `S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz` should be `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.org.tar.gz` for production or `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.io.tar.gz` for test instance.  Replace as specified in Prerequisites 6 (Item 6b)
 
  Refer to Prerequisites 5 - copy Blazegraph journal file into /tmp directory and update REPLACE_ME_FILE_PATH with full complete path.  This may have to be done in a separate terminal which can run docker commands.  docker cp blazegraph-production.jnl.gz go-dev:/tmp.  In docker environment unzip file using gunzip /tmp/blazegraph-production.jnl.gz
  or retrieve file using something similar to cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
   - `BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH # /tmp/blazegraph-20230611.jnl` should be `BLAZEGRAPH_JOURNAL: /tmp/blazegraph-production.jnl` 
  
- - `noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io` update to current production system `noctua_host: http://noctua.geneontology.org`
+ - `noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io` For production, update to current production system `noctua_host: http://noctua.geneontology.org` or `noctua_host: http://noctua.geneontology.io` for testing. Replace as specified in Prerequisites 6 (Item 6f)
 
- Refer to Prerequisites 6 - Update year, month and date for current workspace.  This will be same as Workflow Step 4, 'dns_record_name'
+ Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6c)- Update year, month and date for current workspace.  This will be same as Workflow Step 4, 'dns_record_name'
  - `noctua_host_alias: REPLACE_ME` should be `noctua_host_alias: noctua-production-YYYY-MM-DD.geneontology.org` or  `noctua_host_alias: ___-noctua-test-YYYY-MM-DD.geneontology.io`
 
- - `noctua_lookup_url: REPLACE_ME # https://golr-aux.geneontology.io/solr/` should be `noctua_lookup_url: https://golr-aux.geneontology.io/solr/`
- - `golr_neo_lookup_url: REPLACE_ME # https://aes-test-noctua.geneontology.io` should be `golr_neo_lookup_url: noctua-production-YYYY-MM-DD.geneontology.org` or  `golr_neo_lookup_url:  ___-noctua-test-YYYY-MM-DD.geneontology.io`
+ - `noctua_lookup_url: REPLACE_ME # https://golr-aux.geneontology.io/solr/` should be `noctua_lookup_url: https://golr-aux.geneontology.io/solr/`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6g)
+ - `golr_neo_lookup_url: REPLACE_ME # https://aes-test-noctua.geneontology.io` should be `golr_neo_lookup_url: noctua-production-YYYY-MM-DD.geneontology.org` or  `golr_neo_lookup_url:  ___-noctua-test-YYYY-MM-DD.geneontology.io`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6d) 
 
  Refer to Prerequisites 3 and update the github client id and github client secret
  - `github_client_id: 'REPLACE_ME' should be `github_client_id: 'github client id'`
  - `github_client_secret: 'REPLACE_ME'` should be `github_client_secret: 'github client secret'`
 
- Refer to Prerequisites 6 - Update year, month and date for current workspace for barista instance
+ Refer to Prerequisites 3 and 6 (Item 6e) - Update year, month and date for current workspace for barista instance
  - `github_callback_url: REPLACE_ME # https://aes-test-barista.geneontology.io/auth/github/callback` should be `github_callback_url: barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback` or `github_callback_url: ___-barista-test-YYYY-MM-DD.geneontology.io/auth/github/callback`
 
-Refer to Prerequisites 6 - Update year, month and date for current workspace for golr instance
+Refer to Prerequisites 6 Replace as specified in Prerequisites 6 (Item 6g)- Update year, month and date for current workspace for golr instance
  - `golr_lookup_url: REPLACE_ME # https://aes-test-golr.geneontology.io/solr` should be  `golr_lookup_url: https://golr-production-YYYY-MM-DD.geneontology.org/solr` or `golr_lookup_url: https://___-golr-test-YYYY-MM--DD.geneontology.io/solr`
 
  Refer to Prerequisites 6 - Update year, month and date for current workspace for barista instance
-- `barista_lookup_host: REPLACE_ME # aes-test-barista.geneontology.io` should be `barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_host:  ___-barista-test-YYYY-MM-DD.geneontology.io`
-- `barista_lookup_host_alias: REPLACE_ME` should be `barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_host_alias: ___-barista-test-YYYY-MM-DD.geneontology.io`
-- `barista_lookup_url: REPLACE_ME # https://aes-test-barista.geneontology.io` should be `barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_url: https://___-barista-test-YYYY-MM-DD.geneontology.io`
-```
+- `barista_lookup_host: REPLACE_ME # aes-test-barista.geneontology.io` should be `barista_lookup_host: barista.geneontology.org` or `barista_lookup_host:  barista.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6h)
+- `barista_lookup_host_alias: REPLACE_ME` should be `barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_host_alias: ___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6e)
+- `barista_lookup_url: REPLACE_ME # https://aes-test-barista.geneontology.io` should be `barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_url: https://___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6i)
 
+```
 cp ./production/config-stack.yaml.sample ./config-stack.yaml
 emacs ./config-stack.yaml
 ```
 
+
+
+
+### 7.  Deploy
+Update workspace name in command below. Refer to Prerequisites 6 (Item 6c) and run
+
+```
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-instance.yaml
+If the system prompts, reply yes:
+The authenticity of host 'xxx.xxx.xxx.xxx (xxx.xxx.xxx.xx)' can't be established.
+ED25519 key fingerprint is SHA256:------------------------.
+This key is not known by any other names
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+```
+
+
+
+
+
+
+
+
+
+
+
+=====================================================================================================
 
 DELETE - Dont need this as it is already specified in stack.yaml file==============================
 Modify the ssl vars file as follows:
