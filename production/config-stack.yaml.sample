@@ -28,25 +28,25 @@ stack:
      # see production/gen_journal.sh.sample to generate one
      BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH # /tmp/blazegraph-20230611.jnl
 
-     # HTTP OR HTTPS
-     noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io
-     noctua_host_alias: REPLACE_ME
-     noctua_lookup_url: REPLACE_ME # https://golr-aux.geneontology.io/solr/
-     golr_neo_lookup_url: REPLACE_ME # https://aes-test-noctua.geneontology.io
+     # HTTPS
+     noctua_host: REPLACE_ME # noctua.geneontology.org or noctua.geneontology.io
+     noctua_host_alias: REPLACE_ME # noctua-production-2024-10-15.geneontology.org or aes-noctua-test-2024-10-15.geneontology.io
+     noctua_lookup_url: REPLACE_ME # https://noctua-production-2024-10-15.geneontology.org or https://aes-noctua-test-2024-10-15.geneontology.io
+     golr_neo_lookup_url: REPLACE_ME # https://golr-aux.geneontology.org/solr/ or https://golr-aux.geneontology.io/solr/
 
 
-     # HTTP OR HTTPS
+     # HTTPS
      github_client_id: 'REPLACE_ME'
      github_client_secret: 'REPLACE_ME'
-     github_callback_url: REPLACE_ME # https://aes-test-barista.geneontology.io/auth/github/callback
+     github_callback_url: REPLACE_ME # barista-production-2024-10-15.geneontology.org/auth/github/callback or https://aes-barista-test-2024-10-15.geneontology.io/auth/github/callback
+
+     # HTTPS
+     golr_lookup_url: REPLACE_ME #  https://golr-aux.geneontology.org/solr/ or https://golr-aux.geneontology.io/solr/
 
      # HTTP OR HTTPS
-     golr_lookup_url: REPLACE_ME # https://aes-test-golr.geneontology.io/solr
-
-     # HTTP OR HTTPS
-     barista_lookup_host: REPLACE_ME # aes-test-barista.geneontology.io
-     barista_lookup_host_alias: REPLACE_ME
-     barista_lookup_url: REPLACE_ME # https://aes-test-barista.geneontology.io
+     barista_lookup_host: REPLACE_ME # barista-production-2024-10-15.geneontology.org or aes-barista-test-2024-10-15.geneontology.io
+     barista_lookup_host_alias: REPLACE_ME barista-production-2024-10-15.geneontology.org or am-barista-test-2024-10-15.geneontology.io
+     barista_lookup_url: REPLACE_ME #  https://barista-production-2024-10-15.geneontology.org or https://am-barista-test-2024-10-15.geneontology.io
 
      USE_CLOUDFLARE: 0
    scripts: [ stage.yaml, start_services.yaml]

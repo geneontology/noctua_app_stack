@@ -218,34 +218,33 @@ Modify the stack configuration file as follows:
  or retrieve file using something similar to cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
   - `BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH # /tmp/blazegraph-20230611.jnl` should be `BLAZEGRAPH_JOURNAL: /tmp/blazegraph-production.jnl` 
  
- - `noctua_host: REPLACE_ME # aes-test-noctua.geneontology.io` For production, update to current production system `noctua_host: http://noctua.geneontology.org` or `noctua_host: http://noctua.geneontology.io` for testing. Replace as specified in Prerequisites 6 (Item 6f)
+ - `noctua_host: REPLACE_ME # noctua.geneontology.org or noctua.geneontology.io For production, update to current production system `noctua_host: http://noctua.geneontology.org` or `noctua_host: http://noctua.geneontology.io` for testing. Replace as specified in Prerequisites 6 (Item 6f)
 
- Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6c)- Update year, month and date for current workspace.  This will be same as Workflow Step 4, 'dns_record_name'
+ Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6c)- Update year, month and date for current workspace.  This is also same as Workflow Step 4, 'dns_record_name'
  - `noctua_host_alias: REPLACE_ME` should be `noctua_host_alias: noctua-production-YYYY-MM-DD.geneontology.org` or  `noctua_host_alias: ___-noctua-test-YYYY-MM-DD.geneontology.io`
 
- - `noctua_lookup_url: REPLACE_ME # https://golr-aux.geneontology.io/solr/` should be `noctua_lookup_url: noctua-production-YYYY-MM-DD.geneontology.org` or `noctua_lookup_url:  ___-noctua-test-YYYY-MM-DD.geneontology.io`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6d)
- - `golr_neo_lookup_url: REPLACE_ME # https://aes-test-noctua.geneontology.io` should be `golr_neo_lookup_url: https://golr-aux.geneontology.io/solr/`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6g) 
+ - `noctua_lookup_url: REPLACE_ME # https://noctua-production-2024-10-15.geneontology.org or https://aes-noctua-test-2024-10-15.geneontology.io` For production, should be `noctua_lookup_url: noctua-production-YYYY-MM-DD.geneontology.org` or for testing, `noctua_lookup_url:  ___-noctua-test-YYYY-MM-DD.geneontology.io`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6d)
+ - `golr_neo_lookup_url: REPLACE_ME # https://golr-aux.geneontology.org/solr/ or https://golr-aux.geneontology.io/solr/` For production, should be `golr_neo_lookup_url: https://golr-aux.geneontology.org/solr/` or for testing, `golr_neo_lookup_url: https://golr-aux.geneontology.io/solr/`.  Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6g) 
 
  Refer to Prerequisites 3 and update the github client id and github client secret
  - `github_client_id: 'REPLACE_ME' should be `github_client_id: 'github client id'`
  - `github_client_secret: 'REPLACE_ME'` should be `github_client_secret: 'github client secret'`
 
  Refer to Prerequisites 3 and 6 (Item 6e) - Update year, month and date for current workspace for barista instance
- - `github_callback_url: REPLACE_ME # https://aes-test-barista.geneontology.io/auth/github/callback` should be `github_callback_url: barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback` or `github_callback_url: ___-barista-test-YYYY-MM-DD.geneontology.io/auth/github/callback`
+ - `github_callback_url: REPLACE_ME # barista-production-2024-10-15.geneontology.org/auth/github/callback or https://aes-barista-test-2024-10-15.geneontology.io/auth/github/callback`. For production, update to `github_callback_url: barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback` or for testing, `github_callback_url: ___-barista-test-YYYY-MM-DD.geneontology.io/auth/github/callback`
 
 Refer to Prerequisites 6 Replace as specified in Prerequisites 6 (Item 6g)- Update year, month and date for current workspace for golr instance
- - `golr_lookup_url: REPLACE_ME # https://aes-test-golr.geneontology.io/solr` should be  `golr_lookup_url: https://golr-production-YYYY-MM-DD.geneontology.org/solr` or `golr_lookup_url: https://___-golr-test-YYYY-MM--DD.geneontology.io/solr`
+ - `golr_lookup_url: REPLACE_ME #  https://golr-aux.geneontology.org/solr/ or https://golr-aux.geneontology.io/solr/`. For production, should be  `golr_lookup_url: https://golr-production-YYYY-MM-DD.geneontology.org/solr` or for testing, `golr_lookup_url: https://___-golr-test-YYYY-MM--DD.geneontology.io/solr`
 
  Refer to Prerequisites 6 - Update year, month and date for current workspace for barista instance
-- `barista_lookup_host: REPLACE_ME # aes-test-barista.geneontology.io` should be `barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_host:  ___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6e)
-- `barista_lookup_host_alias: REPLACE_ME` should be `barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_host_alias: ___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6e)
-- `barista_lookup_url: REPLACE_ME # https://aes-test-barista.geneontology.io` should be `barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org` or `barista_lookup_url: https://___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6h)
+- `barista_lookup_host: REPLACE_ME # barista-production-2024-10-15.geneontology.org or aes-barista-test-2024-10-15.geneontology.io`. For production, should be `barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org` or for testing, `barista_lookup_host:  ___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6e)
+- `barista_lookup_host_alias: REPLACE_ME barista-production-2024-10-15.geneontology.org or am-barista-test-2024-10-15.geneontology.io`. For production, should be `barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org` or for testing, `barista_lookup_host_alias: ___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6e)
+- `barista_lookup_url: REPLACE_ME #  https://barista-production-2024-10-15.geneontology.org or https://am-barista-test-2024-10-15.geneontology.io` For production, should be `barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org` or for testing, `barista_lookup_url: https://___-barista-test-YYYY-MM-DD.geneontology.io`. Refer to Prerequisites 6  Replace as specified in Prerequisites 6 (Item 6h)
 
 ```
 cp ./production/config-stack.yaml.sample ./config-stack.yaml
 emacs ./config-stack.yaml
 ```
-
 
 
 
