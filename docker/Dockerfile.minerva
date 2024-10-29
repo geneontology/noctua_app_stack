@@ -1,6 +1,6 @@
-ARG minerva_base_image=openjdk:8-jre
+ARG minerva_base_image=openjdk:17
 
-FROM maven:3.6.3-openjdk-8 AS builder
+FROM maven:3.8.5-openjdk-17 AS builder
 
 COPY ./pom.xml ./pom.xml
 COPY ./minerva-core/pom.xml ./minerva-core/pom.xml
@@ -9,13 +9,13 @@ COPY ./minerva-converter/pom.xml ./minerva-converter/pom.xml
 COPY ./minerva-lookup/pom.xml ./minerva-lookup/pom.xml
 COPY ./minerva-server/pom.xml ./minerva-server/pom.xml
 COPY ./minerva-cli/pom.xml ./minerva-cli/pom.xml
-COPY ./.git ./.git 
+COPY ./.git ./.git
 RUN mvn dependency:go-offline package -B -am -pl minerva-server -DskipTests -Dmaven.javadoc.skip=true -Dsource.skip=true
 
 RUN mvn dependency:go-offline package -B -am -pl minerva-cli -DskipTests -Dmaven.javadoc.skip=true -Dsource.skip=true
 
 COPY ./ ./
-RUN ./build-cli.sh 
+RUN ./build-cli.sh
 
 FROM ${minerva_base_image}
 
@@ -45,7 +45,7 @@ RUN groupadd -g ${gid} gunicorn \
     && mkdir /var/minerva \
     && chown ${uid}:${gid} /var/minerva
 
-COPY --chown=${uid}:${gid} --from=builder /minerva-cli/bin/minerva-cli.jar /app/minerva-cli.jar 
+COPY --chown=${uid}:${gid} --from=builder /minerva-cli/bin/minerva-cli.jar /app/minerva-cli.jar
 
 EXPOSE 6800
 USER gunicorn
