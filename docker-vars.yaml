@@ -7,11 +7,12 @@ repo_map:
    noctua: master
    amigo: master
 
-tag: latest 
-minerva_tag: v3
+tag: latest
+minerva_tag: v4
 
 # Ubuntu based image
 noctua_tag: v4
 
-docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
+#docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
+docker_hub_user: geneontology
 apache_proxy_image: geneontology/apache-proxy:v6
