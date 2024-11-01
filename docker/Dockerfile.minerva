@@ -27,16 +27,7 @@ ENV JAVA_OPTS="-Xmx2G"
 ENV GOLR_SEED="http://golr-aux.geneontology.io/solr"
 ENV GOLR_LABELS="http://noctua-golr.berkeleybop.org"
 
-RUN echo '#!/bin/bash\n\
-set -x\n\
-java $JAVA_OPTS -cp /app/minerva-cli.jar org.geneontology.minerva.server.StartUpTool\
- --use-golr-url-logging --use-request-logging --arachne -g http://skyhook.berkeleybop.org/go-lego-reacto.owl\
- --set-important-relation-parent http://purl.obolibrary.org/obo/LEGOREL_0000000 --port 6800\
- --golr-labels $GOLR_LABELS  --golr-seed $GOLR_SEED \
- --ontojournal $1/blazegraph-go-lego-reacto-neo.jnl\
- -f $1/blazegraph.jnl\
- --export-folder $1/noctua-models/models\
-' > /app/run.sh
+RUN echo -e "#!/bin/bash\nset -x\njava $JAVA_OPTS -cp /app/minerva-cli.jar org.geneontology.minerva.server.StartUpTool --use-golr-url-logging --use-request-logging --arachne -g http://skyhook.berkeleybop.org/go-lego-reacto.owl --set-important-relation-parent http://purl.obolibrary.org/obo/LEGOREL_0000000 --port 6800 --golr-labels $GOLR_LABELS  --golr-seed $GOLR_SEED --ontojournal $1/blazegraph-go-lego-reacto-neo.jnl -f $1/blazegraph.jnl --export-folder $1/noctua-models/models\n" > /app/run.sh
 
 RUN groupadd -g ${gid} gunicorn \
     && useradd -u ${uid} -g ${gid} -c 'Gunicorn User' --no-create-home gunicorn \

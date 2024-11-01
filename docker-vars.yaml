@@ -8,7 +8,7 @@ repo_map:
    amigo: master
 
 tag: latest
-minerva_tag: v4
+minerva_tag: v5
 
 # Ubuntu based image
 noctua_tag: v5
