@@ -16,7 +16,7 @@
     shell: "docker build -f docker/Dockerfile.golr -t '{{ docker_hub_user }}/golr:{{ tag }}' amigo"
 
   - name: build noctua container image
-    shell: "docker build -f docker/Dockerfile.noctua -t '{{ docker_hub_user }}/noctua:{{ tag }}' noctua"
+    shell: "docker build -f docker/Dockerfile.noctua -t '{{ docker_hub_user }}/noctua:{{ noctua_tag }}' noctua"
 
   - name: build minerva container image
-    shell: "docker build -f docker/Dockerfile.minerva -t '{{ docker_hub_user }}/minerva:{{ tag }}' minerva"
+    shell: "docker build -f docker/Dockerfile.minerva -t '{{ docker_hub_user }}/minerva:{{ minerva_tag }}' minerva"
