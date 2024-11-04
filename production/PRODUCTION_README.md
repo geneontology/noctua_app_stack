@@ -166,13 +166,13 @@ emacs config-instance.yaml
 ```
 
 ### 5.  Test and Instantiate instance on aws
-Test the deployment.  From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 (Item 6c) and run
+Test the deployment with the `dry-run` parameter.  From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 (Item 6c) and run
 
 ```
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -dry-run --conf config-instance.yaml
 ```
 
-From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 and run
+From command given below, update REPLACE_ME_WITH_S3_WORKSPACE_NAME to something of the form `noctua-production-YYYY-MM-DD` to match actual workspace name from Prerequisites 6 (Item 6c) and run
 ```
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-instance.yaml
 ```
@@ -249,6 +249,11 @@ emacs ./config-stack.yaml
 
 
 ### 7.  Deploy
+Test the deployment with the `dry-run` parameter. Refer to Prerequisites 6 (Item 6c) and run
+```
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-instance.yaml
+```
+
 Update workspace name in command below. Refer to Prerequisites 6 (Item 6c) and run
 
 ```
