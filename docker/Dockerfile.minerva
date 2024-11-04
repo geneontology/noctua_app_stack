@@ -23,7 +23,7 @@ ARG uid=1000
 ARG gid=1000
 WORKDIR /app
 
-ENV JAVA_OPTS="-Xmx2G"
+ENV JAVA_OPTS="-Xmx24G"
 ENV GOLR_SEED="http://golr-aux.geneontology.io/solr"
 ENV GOLR_LABELS="http://noctua-golr.berkeleybop.org"
 
