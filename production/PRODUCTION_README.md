@@ -269,16 +269,19 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 
 
 
+# Destroy Instance and Delete Workspace.
+
+```sh
+Make sure you are deleting the correct workspace. Refer to Prerequisites 6 (Item 6c) and run
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -show
+
+# Destroy. Refer to Prerequisites 6 (Item 6c) and run
+go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -destroy
+```
 
 
 
-
-
-
-=====================================================================================================
-
-
-
+## Additional information
 
 ### Deploy a version of the Noctua editor (including minerva, barista, noctua):
   - Important ansible files:
@@ -299,48 +302,45 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
   - github OAUTH client id and secret
   - docker-production-compose and various configuration files from template directory
 
-## Requirements
+
+### Environment
 - Note, these are met via a Docker based environment where these tools are installed
 - Terraform. Tested using v1.1.4
 - Ansible. Tested using version 2.10.7
 
 
-
-
-## S3 Terraform Backend
+### S3 Terraform Backend
 
 We use S3 terraform backend to store terraform's state. See production/backend.tf.sample
 
-## Github OAUTH
+### Github OAUTH
 Noctua uses OAUTH for authentication. See templates/github.yaml 
 
-## Prepare Blazegraph journal locally
-
+### Prepare Blazegraph journal locally
 if you do not have a journal see production/gen_journal.sh.sample to generate one
 
-## DNS 
-
+### DNS 
 Note: DNS records are used for noctua and barista. The tool would create them during create phase and destroy them during destroy phase. See `dns_record_name` in the instance config file, ` noctua_host` and `barista_lookup_host` in the stack config file.
 
 The aliases `noctua_host_alias` and `barista_lookup_host_alias` should be FQDN of an EXISTING DNS record. This reccord should NOT be managed by the tool otherwise the tool would delete them during the destroy phase.
 
 Once the instance has been provisioned and tested, this DNS record would need to be updated manually to point to the public ip address of the vm.
 
-## Golr/Amigo
+### Golr/Amigo
 Use the dns name of the external golr instance running alongside amigo. For testing pourposes you can just use aes-test-golr.geneontology if you have deployed the amigo/golr stack or noctua-golr.berkeleybop.org if it is up and running. 
 
-## SSH Keys
+### SSH Keys
 For testing purposes you can you your own ssh keys. But for production please ask for the go ssh keys.
 
-## Prepare The AWS Credentials
 
+### Prepare The AWS Credentials
 The credentials are need by terraform to provision the AWS instance and are used by the provisioned instance to access the s3 bucket used as a certificate store and push aapache logs. One could also copy in from an existing credential set, see Appendix I at the end for more details.
 
 - [ ] Copy and modify the aws credential file to the default location `/tmp/go-aws-credentials` <br/>`cp production/go-aws-credentials.sample /tmp/go-aws-credentials`
 - [ ] You will need to supply an `aws_access_key_id` and `aws_secret_access_key`. These will be marked with `REPLACE_ME`.
 
-## Prepare And Initialize The S3 Terraform Backend
 
+### Prepare And Initialize The S3 Terraform Backend
 The S3 backend is used to store the terraform state.
 
 Check list:
@@ -359,7 +359,7 @@ aws s3 ls s3://REPLACE_ME_WITH_TERRAFORM_BACKEND_BUCKET # S3 bucket
 go-deploy -init --working-directory aws -verbose
 ```
 
-## Workspace Name
+### Workspace Name
 
 Use these commands to figure out the name of an existing workspace if any. The name should have a pattern `production-YYYY-MM-DD`
 
@@ -370,7 +370,7 @@ Check list:
 go-deploy --working-directory aws -list-workspaces -verbose
 ```
 
-## Provision Instance on AWS
+### Provision Instance on AWS
 
 Use the terraform commands shown above to figure out the name of an existing
 workspace. If such workspace exists, then you can skip the
@@ -378,38 +378,46 @@ provisionning of the aws instance. Or you can destroy the aws instance
 and re-provision if that is the intent.
 
 Check list:
-- [ ] <b>Choose your workspace name. We use the following pattern `production-YYYY-MM-DD`</b>. For example: `production-2023-01-30`.
+- [ ] <b>Choose your workspace name. We use the following pattern `noctua-production-YYYY-MM-DD`</b>. For example: `noctua-production-2023-01-30`.
 - [ ] Copy `production/config-instance.yaml.sample` to another location and modify using vim or emacs.
 - [ ] Verify the location of the ssh keys for your AWS instance in your copy of `config-instance.yaml` under `ssh_keys`.
 - [ ] Verify location of the public ssh key in `aws/main.tf`
 - [ ] Remember you can use the -dry-run and the -verbose options to test "go-deploy"
 - [ ] Execute the command set right below in "Command set".
-- [ ] Note down the ip address of the aws instance that is created. This can also be found in production-YYYY-MM-DD.cfg
+- [ ] Note down the ip address of the aws instance that is created. This can also be found in noctua-production-YYYY-MM-DD.cfg
 
 <b>Command set</b>:
 ```
 cp ./production/config-instance.yaml.sample config-instance.yaml
 cat ./config-instance.yaml   # Verify contents and modify as needed.
 
-# Deploy command.
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose --conf config-instance.yaml
-
-# Display the terraform state
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -show
-
-# Display the public ip address of the aws instance. 
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -output
-
-#Useful Information When Debugging.
-# The deploy command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
-cat production-YYYY-MM-DD.tfvars.json
-
-# The Deploy command creates a ansible inventory file.
-cat production-YYYY-MM-DD-inventory.cfg
+### Deploy command.
+```
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-instance.yaml
 ```
 
-## Deploy Stack to AWS
+### Display the terraform state
+```
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
+```
 
+### Display the public ip address of the aws instance. 
+```
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -output
+```
+
+### Useful Information When Debugging.
+-The deploy command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
+```
+cat noctua-production-YYYY-MM-DD.tfvars.json
+```
+
+### The Deploy command creates a ansible inventory file.
+```
+cat noctua-production-YYYY-MM-DD-inventory.cfg
+```
+
+### Deploy Stack to AWS
 Check list:
 - [ ] Check that DNS names for noctua and barista map point to public ip address on AWS Route 53.
 - [ ] Location of SSH keys may need to be replaced after copying config-stack.yaml.sample
@@ -429,17 +437,15 @@ Check list:
 cp ./production/config-stack.yaml.sample ./config-stack.yaml
 cat ./config-stack.yaml    # Verify contents and modify if needed.
 export ANSIBLE_HOST_KEY_CHECKING=False
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
 ```
 
-## Access noctua from a browser
-
+### Access noctua from a browser
 Check list:
 - [ ] noctua is up and healthy. We use health checks in docker compose file
 - [ ] Use noctua dns name. http://{noctua_host} or https://{noctua_host} if ssl is enabled. 
 
-## Debugging
-
+### Debugging
 - ssh to machine. username is ubuntu. Try using dns names to make sure they are fine
 - docker-compose -f stage_dir/docker-compose.yaml ps
 - docker-compose -f stage_dir/docker-compose.yaml down # whenever you make any changes 
@@ -447,18 +453,17 @@ Check list:
 - docker-compose -f stage_dir/docker-compose.yaml logs -f 
 - Use -dry-run and copy and paste the command and execute it manually
 
-## Destroy Instance and Delete Workspace.
 
+### Destroy Instance and Delete Workspace.
 ```sh
 Make sure you are deleting the correct workspace.
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -show
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
 
 # Destroy.
-go-deploy --workspace production-YYYY-MM-DD --working-directory aws -verbose -destroy
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -destroy
 ```
 
 ## Appendix I: Development Environment
-
 ```
 # Start docker container `go-dev` in interactive mode.
 docker run --rm --name go-dev -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
@@ -498,3 +503,6 @@ chown root /tmp/go-*
 chgrp root /tmp/go-*
 ```
 
+
+## Appendix II: Integrating changes to the workbench
+The versions of minerva and noctua for the application stack are based on what is specified in docker-vars.yaml.  If there are updates can be released to production, then a build has to be created with the changes and pushed to the Docker Hub Container Image Library. The version number for minerva can be updated via minerva_tag and noctua version can be updated via noctua_tag.    
