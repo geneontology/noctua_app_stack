@@ -505,4 +505,26 @@ chgrp root /tmp/go-*
 
 
 ## Appendix II: Integrating changes to the workbench
-The versions of minerva and noctua for the application stack are based on what is specified in docker-vars.yaml.  If there are updates can be released to production, then a build has to be created with the changes and pushed to the Docker Hub Container Image Library. The version number for minerva can be updated via minerva_tag and noctua version can be updated via noctua_tag.    
+The versions of minerva and noctua for the application stack are based on what is specified in docker-vars.yaml.  If there are updates that can be released to production, then a build has to be created with the changes and pushed to the Docker Hub Container Image Library. The version number for minerva can be updated via minerva_tag and noctua version can be updated via noctua_tag.
+
+### Build Noctua
+```
+#Login into Dockerhub with username, password and build noctua version V6
+docker login
+git checkout https://github.com/geneontology/noctua.git
+docker build -f docker/Dockerfile.noctua -t 'geneontology/noctua:v6' -t 'geneontology/noctua:latest' noctua
+
+#Ensure the build works
+docker run --name mv6 -it geneontology/noctua:v6 /bin/bash
+exit
+
+#Push to Dockerhub
+docker push geneontology/noctua:v6
+docker push geneontology/noctua:latest
+```
+
+### Build Minerva
+docker build -f docker/Dockerfile.minerva -t 'geneontology/minerva:v7' -t 'geneontology/minerva:latest' minerva
+docker run --name mv7 -it geneontology/minerva:v7 /bin/bash
+docker push geneontology/minerva:v7
+docker push geneontology/minerva:latest

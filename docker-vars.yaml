@@ -11,7 +11,7 @@ tag: latest
 minerva_tag: v7
 
 # Ubuntu based image
-noctua_tag: v5
+noctua_tag: v6
 
 #docker_hub_user: "{{ lookup('env', 'USER')|lower }}"
 docker_hub_user: geneontology
