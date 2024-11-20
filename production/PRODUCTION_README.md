@@ -15,7 +15,7 @@ Login into aws and view the S3 buckets information.  Drill down by selecting 'go
 Before starting, ensure the following are available
 1.  aws credentials (aws_access_key_id and aws_secret_access_key)
 
-2.  SSH keys in the shared SpderOak store
+2.  SSH keys - Refer to on-boarding instructions 
 
 3.  github_client_id and github_client_secret  - Github OAuth 
 
@@ -108,7 +108,7 @@ go-deploy -h
 ####  Copy the ssh keys from your docker host into the running docker image, in `/tmp`:
 
 These commands may have to be executed from a separate terminal that can run Docker commands.
-See Prerequisites 2 for keys and copy keys from SpderOak
+See Prerequisites 2 for keys.  Copy keys to docker image
 
 ```
 docker cp go-ssh go-dev:/tmp
@@ -524,6 +524,7 @@ docker push geneontology/noctua:latest
 ```
 
 ### Build Minerva
+git checkout https://github.com/geneontology/minerva.git
 docker build -f docker/Dockerfile.minerva -t 'geneontology/minerva:v7' -t 'geneontology/minerva:latest' minerva
 docker run --name mv7 -it geneontology/minerva:v7 /bin/bash
 docker push geneontology/minerva:v7
