@@ -32,7 +32,7 @@ In addition to noctua, other instances and artifacts will also be created. These
 |6e      | barista            | barista-production-YYYY-MM-DD.geneontology.org            | ___-barista-test-YYYY-MM-DD.geneontology.io           |
 |6f      | current noctua url | http://noctua.geneontology.org                            | http://noctua.geneontology.io                         |
 |6g      | noctua/golr lookup | https://golr-aux.geneontology.org/solr/                   | https://golr-aux.geneontology.io/solr/                |
-|6h      | barista url        | barista-production-YYYY-MM-DD.geneontology.org            | https://___-barista-test-YYYY-MM-DD.geneontology.io   |
+|6h      | barista url        | https://barista-production-YYYY-MM-DD.geneontology.org            | https://___-barista-test-YYYY-MM-DD.geneontology.io   |
 
 Both production and testing will execute a command to initialize the workspace:
 
