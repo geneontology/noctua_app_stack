@@ -1,9 +1,17 @@
-# Modify java maximum heap based on your machine
+# Modify java maximum heap based on your machine and also update sdir such that it is same as path where git clone is executed.  Note, sdir has to be modified in export and docker run commands
+# If necessary, modify minerva version i.e. geneontology/minerva:v7
 export CMD="java -Xmx4G -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
 
 git clone https://github.com/geneontology/noctua-models.git
-docker pull geneontology/minerva:v2
-echo docker run --rm -v $PWD:/sdir -t geneontology/minerva:v2  $CMD
-docker run --rm -v $PWD:/sdir -t geneontology/minerva:v2  $CMD
+# If above command takes long to run or is unsuccessful, retrieve a shallow copy
+# For testing puroses, only a subset of models in directory 'noctua-models/models' are required.  Therefore, only about a ~1000 .ttl files are necessary in directory  'noctua-models/models'
+#git clone https://github.com/geneontology/noctua-models.git --depth 1   
+docker pull geneontology/minerva:v7
+
+# Modify sdir
+echo docker run --rm -v $PWD:/sdir -t geneontology/minerva:v7  $CMD
+
+# Modify sdir
+docker run --rm -v $PWD:/sdir -t geneontology/minerva:v7  $CMD
 exit 1
 
