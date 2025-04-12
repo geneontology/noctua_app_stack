@@ -10,10 +10,10 @@ stack:
      apache_proxy_image: geneontology/apache-proxy:v6
 
      S3_CRED_FILE: /tmp/go-aws-credentials
-     S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET
+     S3_BUCKET: REPLACE_ME_APACHE_LOG_BUCKET
 
      USE_QOS: 0
-     QS_ClientEventBlockCount: 350 
+     QS_ClientEventBlockCount: 350
      QS_ClientEventBlockCountSeconds: 300
      QS_ClientEventBlockExcludeIP: "8.8.8.8 9.9.9.9"
 
@@ -21,8 +21,8 @@ stack:
 
      USE_SSL: 1
      S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz
-     
-     
+
+
      # download or create journal locally and specify full path here.
      # cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
      # see production/gen_journal.sh.sample to generate one
