@@ -546,31 +546,67 @@ chown root /tmp/go-*
 chgrp root /tmp/go-*
 ```
 
-## Appendix II: Integrating changes to the workbench
+## Appendix II: Updating software and integrating changes to the workbenches
 
 The versions of minerva and noctua for the application stack are based on what is specified in docker-vars.yaml. If there are updates that can be released to production, then a build has to be created with the changes and pushed to the Docker Hub Container Image Library. The version number for minerva can be updated via minerva_tag and noctua version can be updated via noctua_tag.
 
-### Build Noctua
+Before operating with docker, you may need to login with
+password/token:
 
 ```
-#Login into Dockerhub with username, password and build noctua version V6
 docker login
+```
+
+If the operations seem odd: yes, we are grabbing these repos and building the
+docker images in the root of `noctua_app_stack`.
+
+### Build Noctua
+
+Grab and build:
+```
 git checkout https://github.com/geneontology/noctua.git
 docker build -f docker/Dockerfile.noctua -t 'geneontology/noctua:v6' -t 'geneontology/noctua:latest' noctua
+```
 
-#Ensure the build works
+Ensure the build works:
+```
 docker run --name mv6 -it geneontology/noctua:v6 /bin/bash
 exit
+```
 
-#Push to Dockerhub
+Push to Dockerhub:
+```
 docker push geneontology/noctua:v6
 docker push geneontology/noctua:latest
 ```
 
+### Updating workbenches and configurations
+
+To update a workbench (add/remove repo or branch), start by editing
+the `staged_repos` variable in `vars.yaml` in the root directory.
+
+You will then need to edit `config/startup.yaml.stack-dev` (referenced
+in `docker/Dockerfile.noctua`) to reflect this set and layout.
+
 ### Build Minerva
 
+For example, if we're moving the docker image from Minerva v6 to
+Minerva v7.
+
+
+```
 git checkout https://github.com/geneontology/minerva.git
 docker build -f docker/Dockerfile.minerva -t 'geneontology/minerva:v7' -t 'geneontology/minerva:latest' minerva
+```
+
+Ensure the build works:
+```
 docker run --name mv7 -it geneontology/minerva:v7 /bin/bash
+exit
+```
+
+Push to dockerhub:
+```
 docker push geneontology/minerva:v7
 docker push geneontology/minerva:latest
+```
