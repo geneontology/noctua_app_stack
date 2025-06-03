@@ -113,7 +113,7 @@ docker cp go-ssh.pub noctua-devops:/tmp
 You should now have the following in your image:
 
 ```
-ls -latr /tmp
+ls -latr /tmp/go-ssh*
 /tmp/go-ssh
 /tmp/go-ssh.pub
 ```
@@ -168,15 +168,15 @@ cp ./production/config-instance.yaml.sample config-instance.yaml
 emacs config-instance.yaml
 ```
 
-### 5. Test and Instantiate instance on AWS
+### 5. Test and instantiate instance on AWS
 
-Test the deployment with the `dry-run` parameter. From command given below, update `REPLACE_ME_WITH_S3_WORKSPACE_NAME` to something of the form `noctua-production-YYYY-MM-DD` (or "development" version) to match actual workspace name from Prerequisites 6 (Item 6c) and run:
+Test the deployment with the `dry-run` parameter. From command given below, update `REPLACE_ME_WITH_S3_WORKSPACE_NAME` to something of the form `noctua-production-YYYY-MM-DD` (or "development" version `noctua-development-YYYY-MM-DD`) to match actual workspace name from Prerequisites 6 (Item 6c) and run:
 
 ```
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -dry-run --conf config-instance.yaml
 ```
 
-From command given below, update `REPLACE_ME_WITH_S3_WORKSPACE_NAME` to something of the form `noctua-production-YYYY-MM-DD` (or "development" version) to match actual workspace name from Prerequisites 6 (Item 6c) and run:
+From command given below, update `REPLACE_ME_WITH_S3_WORKSPACE_NAME` to something of the form `noctua-production-YYYY-MM-DD` (or "development" version `noctua-development-YYYY-MM-DD`) to match actual workspace name from Prerequisites 6 (Item 6c) and run:
 
 ```
 go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-instance.yaml
@@ -184,7 +184,7 @@ go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws 
 
 Note the IP address of the EC2 instance.
 
-Optional, but useful commands.
+#### Optional, but useful commands
 
 List workspaces to ensure one has been created:
 
@@ -227,13 +227,13 @@ ssh -i /tmp/go-ssh ubuntu@noctua-production-YYYY-MM-DD.geneontology.org or ssh -
 logout
 ```
 
-### 6. Update configuration files to deploy on AWS
+### 6. Update configuration files for stack deployment on AWS
 
 Modify the stack configuration file as follows:
 
-- `S3_BUCKET: REPLACE_ME_APACHE_LOG_BUCKET` This should be `S3_BUCKET: go-service-logs-noctua-production` for production or `S3_BUCKET: go-service-logs-noctua-development` for test instance
+- `S3_BUCKET: REPLACE_ME_APACHE_LOG__BUCKET` This should be `S3_BUCKET: go-service-logs-noctua-production` for production or `S3_BUCKET: go-service-logs-noctua-development` for test instances.
 - `USE_QOS: 0` should be `USE_QOS: 1`
-- `S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz` should be `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.org.tar.gz` for production or `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.io.tar.gz` for test instance. Replace as specified in Prerequisites 6 (Item 6b)
+- `S3_SSL_CERTS_LOCATION: s3://REPLACE_ME_CERT_BUCKET/REPLACE_ME_DOMAIN.tar.gz` should be `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.org.tar.gz` for production or `S3_SSL_CERTS_LOCATION: s3://go-service-lockbox/geneontology.io.tar.gz` for test instances. Replace as specified in Prerequisites 6 (Item 6b)
 
 Refer to Prerequisites 5 - Copy Blazegraph journal file into /tmp directory and update `REPLACE_ME_FILE_PATH` with full complete path. This may have to be done in a separate terminal which can run docker commands. E.g.: `docker cp blazegraph.jnl noctua-devops:/tmp/blazegraph-2025-04-11.jnl`. Make sure the file is unzipped in the docker image. This image may also be produced using the Noctua/Minerva Outage SOP. Or, alternatively, retrieve file using something similar to `cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl`.
 
@@ -254,7 +254,7 @@ Refer to Prerequisites 3 and update the github client id and github client secre
 
 Refer to Prerequisites 3 and 6 (Item 6e) - Update year, month and date for current workspace for barista instance
 
-- `github_callback_url: REPLACE_ME # barista-production-2024-10-15.geneontology.org/auth/github/callback or https://aes-barista-test-2024-10-15.geneontology.io/auth/github/callback`. For production, update to `github_callback_url: barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback` or for testing, `github_callback_url: barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
+- `github_callback_url: REPLACE_ME # barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback or https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`. For production, update to `github_callback_url: barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback` or for testing, `github_callback_url: barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
 
 Refer to Prerequisites 6 Replace as specified in Prerequisites 6 (Item 6g)- Update year, month and date for current workspace for golr instance.
 
@@ -290,7 +290,8 @@ This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
 
-REMEMBER: it may take a while to fully spin up. (5-10m?)
+REMEMBER: it may take a while to fully spin up, even after it
+returns. (5-10m?)
 
 # Destroy Instance and Delete Workspace.
 
