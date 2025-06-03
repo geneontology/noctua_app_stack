@@ -585,8 +585,9 @@ docker push geneontology/noctua:latest
 To update a workbench (add/remove repo or branch), start by editing
 the `staged_repos` variable in `vars.yaml` in the root directory.
 
-You will then need to edit `config/startup.yaml.stack-dev` (referenced
-in `docker/Dockerfile.noctua`) to reflect this set and layout.
+You will then need to edit `templates/startup.yaml` (referenced in
+`docker/Dockerfile.noctua`) to reflect this set and
+layout. Specifically, the `WORKBENCHES` variable.
 
 ### Build Minerva
 
