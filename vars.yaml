@@ -13,7 +13,7 @@ staged_repos:
    noctua-visual-pathway-editor: master
    noctua-alliance-pathway-preview: master
    noctua-landing-page: master
-   noctua-standard-annotations: master
+   noctua-standard-annotations: main
    noctua-models: master
    go-site: master
 
