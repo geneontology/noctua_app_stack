@@ -16,7 +16,7 @@ Before starting, ensure the following are available:
 
 1. AWS credentials (aws\_access\_key\_id and aws\_secret\_access\_key)
 2. SSH keys - Refer to on-boarding instructions
-3. github\_client\_id and github\_client\_secret  - Github OAuth
+3. github\_client\_id and github\_client\_secret  - Github OAuth; these should be clarified or made in GitHub's Org -> Settings -> Developer settings -> OAuth Apps
 4. Docker. Docker commands are executed from a terminal window or Windows command prompt
 5. Blazegraph journal file. `production/gen_journal.sh` has instructions on creating one. Or download a test journal from the last release: http://current.geneontology.org/products/blazegraph/blazegraph-production.jnl.gz.
 6. Determine the workspace namespace pattern. If this is for testing purposes, the workspace name should have your initials and the label 'test' as part of its name. For example, for testing, aes-noctua-test-2024-10-02 or for production,  noctua-production-2024-10-02. Since, the namespace will be used multiple times, to make things easier, and more imporatantly, to prevent creating actual instances with labels containing `YYYYY-MM-DD`, open up a text editor and enter the namespace. Note that 6g.2 will likely be a custom NEO instance setup separately at https://github.com/geneontology/amigo/blob/master/provision/production/PRODUCTION_PROVISION_README.md .
@@ -510,12 +510,12 @@ go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verb
 
 ```
 # Start docker container `noctua-devops` in interactive mode.
-docker run --rm --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
+docker run --rm --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4 /bin/bash
 
 # In the command above we used the `--rm` option which means the container will be deleted when you exit. If that is not
 # the intent and you want delete it later at your own convenience. Use the following `docker run` command.
 
-docker run --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.2  /bin/bash
+docker run --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4 /bin/bash
 
 # Exit or stop the container.
 docker stop noctua-devops  # stop container with the intent of restarting it. This equivalent to `exit` inside the container
