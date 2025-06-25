@@ -206,39 +206,51 @@ Modify the stack configuration file as follows:
 - `barista_lookup_host_alias` should be uncommented and updated
 - `barista_lookup_url` should be uncommented and updated
 
-## Deploy
+## Deployment
 
-Test the deployment with the `dry-run` parameter.
+For production:
 
+```bash
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -dry-run --conf config-stack.yaml
+go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
 ```
-go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -dry-run --conf config-stack.yaml
+
+For development:
+
+```bash
+go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -verbose -dry-run --conf config-stack.yaml
+go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
 ```
 
-Update workspace name in command below. Refer to Prerequisites 6 (Item 6c) and run
-
+If the system prompts something like
 ```
-go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose --conf config-stack.yaml
-If the system prompts, reply yes:
 The authenticity of host 'xxx.xxx.xxx.xxx (xxx.xxx.xxx.xx)' can't be established.
 ED25519 key fingerprint is SHA256:------------------------.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 ```
+Reply yes.
 
 REMEMBER: it may take a while to fully spin up, even after it
 returns. (5-10m?)
 
-# Destroy Instance and Delete Workspace.
+## Destroy Instance and Delete Workspace.
 
-```sh
-Make sure you are deleting the correct workspace. Refer to Prerequisites 6 (Item 6c) and run
-go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -show
+First, make sure you are deleting the correct workspace. For example:
 
-# Destroy. Refer to Prerequisites 6 (Item 6c) and run
-go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws -verbose -destroy
+```
+go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -verbose -show
 ```
 
-## Additional information
+Now destroy. For example:
+
+```
+go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -verbose -destroy
+```
+
+# Additional information
+
+## Files
 
 ### Deploy a version of the Noctua editor (including minerva, barista, noctua):
 
@@ -272,15 +284,15 @@ go-deploy --workspace REPLACE_ME_WITH_S3_WORKSPACE_NAME --working-directory aws 
 
 We use S3 terraform backend to store terraform's state. See production/backend.tf.sample
 
-### Github OAUTH
+### Github OAuth2
 
-Noctua uses OAUTH for authentication. See templates/github.yaml
+Noctua uses OAuth2 for authentication. See templates/github.yaml
 
 ### Prepare Blazegraph journal locally
 
 Ff you do not have a journal see production/gen_journal.sh.sample to generate one
 
-### DNS
+## DNS
 
 Note: DNS records are used for noctua and barista. The tool would create them during create phase and destroy them during destroy phase. See `dns_record_name` in the instance config file, ` noctua_host` and `barista_lookup_host` in the stack config file.
 
@@ -288,198 +300,53 @@ The aliases `noctua_host_alias` and `barista_lookup_host_alias` should be FQDN o
 
 Once the instance has been provisioned and tested, this DNS record would need to be updated manually to point to the public ip address of the vm.
 
-### GOlr/AmiGO
+## Debugging on instance
 
-Use the dns name of the external golr instance running alongside amigo. For testing pourposes you can just use aes-test-golr.geneontology if you have deployed the amigo/golr stack or noctua-golr.berkeleybop.org if it is up and running.
+First, `ssh` to machine. username is `ubuntu`. Try using dns names,
+rather than the direct IP address, to make sure they are correct.
 
-### SSH Keys
+Examination commands:
 
-For testing purposes you can you your own ssh keys. But for production please ask for the go ssh keys.
-
-### Prepare The AWS Credentials
-
-The credentials are need by terraform to provision the AWS instance and are used by the provisioned instance to access the S3 bucket used as a certificate store and push aapache logs. One could also copy in from an existing credential set, see Appendix I at the end for more details.
-
-- [ ] Copy and modify the AWS credential file to the default location `/tmp/go-aws-credentials` <br/>`cp production/go-aws-credentials.sample /tmp/go-aws-credentials`
-- [ ] You will need to supply an `aws_access_key_id` and `aws_secret_access_key`. These will be marked with `REPLACE_ME`.
-
-### Prepare And Initialize The S3 Terraform Backend
-
-The S3 backend is used to store the terraform state.
-
-Check list:
-
-- [ ] Assumes you have prepared the AWS credentials above.
-- [ ] Copy the backend sample file <br/>`cp ./production/backend.tf.sample ./aws/backend.tf`
-- [ ] Make sure you have the correct S3 bucket configured in the bakend file <br/>`cat ./aws/backend.tf `
-- [ ] Execute the command set right below in "Command set".
-
-<b>Command set</b>:
-
-```
-# Use the AWS CLI to make sure you have access to the terraform S3 backend bucket
-
-export AWS_SHARED_CREDENTIALS_FILE=/tmp/go-aws-credentials
-aws s3 ls s3://REPLACE_ME_WITH_TERRAFORM_BACKEND_BUCKET # S3 bucket
-go-deploy -init --working-directory aws -verbose
-```
-
-### Workspace Name
-
-Use these commands to figure out the name of an existing workspace if any. The name should have a pattern `production-YYYY-MM-DD`
-
-Check list:
-
-- [ ] Assumes you have initialized the backend. See above
-
-```
-go-deploy --working-directory aws -list-workspaces -verbose
-```
-
-### Provision Instance on AWS
-
-Use the terraform commands shown above to figure out the name of an existing
-workspace. If such workspace exists, then you can skip the
-provisionning of the AWS instance. Or you can destroy the AWS instance
-and re-provision if that is the intent.
-
-Check list:
-
-- [ ] <b>Choose your workspace name. We use the following pattern `noctua-production-YYYY-MM-DD`</b>. For example: `noctua-production-2023-01-30`.
-- [ ] Copy `production/config-instance.yaml.sample` to another location and modify using vim or emacs.
-- [ ] Verify the location of the ssh keys for your AWS instance in your copy of `config-instance.yaml` under `ssh_keys`.
-- [ ] Verify location of the public ssh key in `aws/main.tf`
-- [ ] Remember you can use the -dry-run and the -verbose options to test "go-deploy"
-- [ ] Execute the command set right below in "Command set".
-- [ ] Note down the ip address of the AWS instance that is created. This can also be found in noctua-production-YYYY-MM-DD.cfg
-
-<b>Command set</b>:
-
-```
-cp ./production/config-instance.yaml.sample config-instance.yaml
-cat ./config-instance.yaml   # Verify contents and modify as needed.
-```
-
-### Deploy command.
-
-```
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-instance.yaml
-```
-
-### Display the terraform state
-
-```
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
-```
-
-### Display the public ip address of the AWS instance.
-
-```
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -output
-```
-
-### Useful Information When Debugging.
-
-The deploy command creates a terraform tfvars. These variables override the variables in `aws/main.tf`
-```
-cat noctua-production-YYYY-MM-DD.tfvars.json
-```
-
-### The Deploy command creates a ansible inventory file.
-
-```
-cat noctua-production-YYYY-MM-DD-inventory.cfg
-```
-
-### Deploy Stack to AWS
-
-Check list:
-- [ ] Check that DNS names for noctua and barista map point to public ip address on AWS Route 53.
-- [ ] Location of SSH keys may need to be replaced after copying config-stack.yaml.sample
-- [ ] Github credentials will need to be replaced in config-stack.yaml.sample
-- [ ] S3 credentials are placed in a file using format described above
-- [ ] S3 uri if ssl is enabled. Location of ssl certs/key
-- [ ] QoS mitigation if QoS is enabled
-- [ ] Location of blazegraph.jnl. This assumes you have generated the journal using steps above
-- [ ] Use same workspace name as in previous step
-- [ ] Remember you can use the -dry-run and the -verbose options
-- [ ] Optional When Testing: change dns names in the config file for noctua, barista, and golr.
-- [ ] Execute the command set right below in "Command set".
-
-<b>Command set</b>:
-
-```
-cp ./production/config-stack.yaml.sample ./config-stack.yaml
-cat ./config-stack.yaml    # Verify contents and modify if needed.
-export ANSIBLE_HOST_KEY_CHECKING=False
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose --conf config-stack.yaml
-```
-
-### Access noctua from a browser
-
-Check list:
-
-- [ ] noctua is up and healthy. We use health checks in docker compose file
-- [ ] Use noctua dns name. http://{noctua_host} or https://{noctua_host} if ssl is enabled.
-
-### Debugging
-
-- ssh to machine. username is ubuntu. Try using dns names to make sure they are fine
-- docker-compose -f stage_dir/docker-compose.yaml ps
-- docker-compose -f stage_dir/docker-compose.yaml down # whenever you make any changes
-- docker-compose -f stage_dir/docker-compose.yaml up -d
-- docker-compose -f stage_dir/docker-compose.yaml logs -f
-- Use -dry-run and copy and paste the command and execute it manually
-
-### Destroy Instance and Delete Workspace.
-
-```sh
-Make sure you are deleting the correct workspace.
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
-
-# Destroy.
-go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -destroy
-```
+- `docker-compose -f stage_dir/docker-compose.yaml ps`
+- `docker-compose -f stage_dir/docker-compose.yaml down` whenever you make any changes
+- `docker-compose -f stage_dir/docker-compose.yaml up -d`
+- `docker-compose -f stage_dir/docker-compose.yaml logs -f`
+- Use `-dry-run` and copy and paste the command and execute it manually
 
 ## Appendix I: Development Environment
 
-```
-# Start docker container `noctua-devops` in interactive mode.
+Start docker container `noctua-devops` in interactive mode.
+
+```bash
 docker run --rm --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4 /bin/bash
+```
 
-# In the command above we used the `--rm` option which means the container will be deleted when you exit. If that is not
-# the intent and you want delete it later at your own convenience. Use the following `docker run` command.
+In the command above we used the `--rm` option which means the
+container will be deleted when you exit. If that is not the intent and
+you want delete it later at your own convenience. Use the following
+`docker run` command.
 
+```bash
 docker run --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4 /bin/bash
+```
 
-# Exit or stop the container.
-docker stop noctua-devops  # stop container with the intent of restarting it. This equivalent to `exit` inside the container
+Exit or stop the container: stop container with the intent of
+restarting it. This equivalent to `exit` inside the container:
 
-docker start -ia noctua-devops  # restart and attach to the container
+```bash
+docker stop noctua-devops
+```
+
+Restart and attach to the container:
+
+```bash
+docker start -ia noctua-devops
+```
+
+Remove a previously stopped container:
+
+```bash
 docker rm -f noctua-devops # get rid of it for good when ready.
-```
-
-SSH/AWS Credentials:
-
-Use `docker cp` to copy these credentials to /tmp. You can also copy and paste using your favorite editor vim or emacs.
-
-Under /tmp you would need the following:
-
-- /tmp/go-aws-credentials
-- /tmp/go-ssh
-- /tmp/go-ssh.pub
-
-```
-# Example using `docker cp` to copy files from host to docker container named `noctua-devops`
-
-docker cp <path_on_host> noctua-devops:/tmp/
-```
-
-Then, within the docker image:
-
-```
-chown root /tmp/go-*
-chgrp root /tmp/go-*
 ```
 
 ## Appendix II: Updating software and integrating changes to the workbenches
@@ -489,7 +356,7 @@ The versions of minerva and noctua for the application stack are based on what i
 Before operating with docker, you may need to login with
 password/token:
 
-```
+```bash
 docker login
 ```
 
@@ -499,19 +366,22 @@ docker images in the root of `noctua_app_stack`.
 ### Build Noctua
 
 Grab and build:
-```
+
+```bash
 git checkout https://github.com/geneontology/noctua.git
 docker build -f docker/Dockerfile.noctua -t 'geneontology/noctua:v6' -t 'geneontology/noctua:latest' noctua
 ```
 
 Ensure the build works:
-```
+
+```bash
 docker run --name mv6 -it geneontology/noctua:v6 /bin/bash
 exit
 ```
 
 Push to Dockerhub:
-```
+
+```bash
 docker push geneontology/noctua:v6
 docker push geneontology/noctua:latest
 ```
@@ -531,19 +401,21 @@ For example, if we're moving the docker image from Minerva v6 to
 Minerva v7.
 
 
-```
+```bash
 git checkout https://github.com/geneontology/minerva.git
 docker build -f docker/Dockerfile.minerva -t 'geneontology/minerva:v7' -t 'geneontology/minerva:latest' minerva
 ```
 
 Ensure the build works:
-```
+
+```bash
 docker run --name mv7 -it geneontology/minerva:v7 /bin/bash
 exit
 ```
 
 Push to dockerhub:
-```
+
+```bash
 docker push geneontology/minerva:v7
 docker push geneontology/minerva:latest
 ```
