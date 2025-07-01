@@ -1,23 +1,23 @@
 # Noctua Production Deployment
 
-This repository enables the deployment of the Noctua stack to AWS. It
-includes minerva, barista, and noctua, which points to an external
-amigo instance. The architecture is designed so that sub-components
-can easily be provisioned, instantiated and deployed. When it is time
-for the system to be destroyed, all subsystems and artifacts should be
-removed.
+This repository documents the deployment of the Noctua stack to
+AWS. It includes minerva, barista, and noctua (which points to an
+external AmiGO instance, documented elsewhere). The architecture is
+designed so that sub-components can easily be provisioned,
+instantiated, and deployed. When it is time for the system to be
+destroyed, all subsystems and artifacts will be removed.
 
 ## Prerequisites
 
 Before starting, ensure the following are available:
 
 1. AWS credentials (`aws_access_key_id` and `aws_secret_access_key`).
-2. SSH keys - Refer to on-boarding instructions.
+2. SSH keys. These are `go-ssh` and `go-ssh.pub`. Refer to on-boarding
+   instructions.
 3. `github_client_id` and `github_client_secret` - Github OAuth; these
    should be clarified or made in GitHub's Org -> Settings ->
    Developer settings -> OAuth Apps.
-4. Docker. Docker commands are executed from a terminal window or
-   Windows command prompt
+4. Docker. Docker commands are executed from a terminal window.
 5. Blazegraph journal file. `production/gen_journal.sh` has
    instructions on creating one. One may also download a test journal
    from a release
@@ -26,9 +26,10 @@ Before starting, ensure the following are available:
 6. Determine your environment: "production" (which will be deployed to
    geneontology.org) or "development" (which will be deployed to
    geneontology.io).
-7. Determine the workspace namespace pattern; basically, whenever you
-   see `YYYY-MM-DD`, choose today's date (e.g. 2025-03-16). This will
-   uniquely identify this server now and in the future.
+7. Determine the workspace namespace pattern. Basically, whenever you
+   see `YYYY-MM-DD` in this documentation, choose today's date
+   (e.g. 2025-03-16). This will uniquely identify the workspace and
+   server names.
 
 ## Create a Docker development environment and clone repository from Github
 
@@ -36,7 +37,11 @@ We have a docker based dev environment with all these tools installed.
 
 ```bash
 docker rm noctua-devops || true
-docker run --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4  /bin/bash
+docker run --name noctua-devops -it geneontology/go-devops-base:tools-jammy-0.4.4 /bin/bash
+```
+
+Then, within the docker image started in the last command:
+```bash
 cd /tmp && git clone https://github.com/geneontology/noctua_app_stack.git && cd noctua_app_stack
 ```
 
@@ -45,6 +50,8 @@ Test with:
 ```bash
 go-deploy -h
 ```
+
+If this command works, your environment should be okay.
 
 ## Add credentials for accessing and provisioning resources on AWS
 
@@ -61,10 +68,15 @@ docker cp go-ssh.pub noctua-devops:/tmp
 
 You should now have the following in your image:
 
-```bash
-ls -latr /tmp/go-ssh*
+```
 /tmp/go-ssh
 /tmp/go-ssh.pub
+```
+
+Check with:
+
+```bash
+ls -latr /tmp/go-ssh*
 ```
 
 Make sure they have the right permissions to be used:
@@ -81,9 +93,9 @@ cp production/go-aws-credentials.sample /tmp/go-aws-credentials
 emacs /tmp/go-aws-credentials
 ```
 
-Replace the `REPLACE_ME`s for  `aws_access_key_id` and `aws_secret_access_key` with your personal dev keys into the file.
+Replace the `REPLACE_ME`s for `aws_access_key_id` and `aws_secret_access_key` with your personal dev keys into the file.
 
-Now export into your running docker environment.
+Now export into your running docker environment:
 
 ```bash
 export AWS_SHARED_CREDENTIALS_FILE=/tmp/go-aws-credentials
@@ -111,7 +123,7 @@ Test with:
 go-deploy --working-directory aws -list-workspaces -verbose
 ```
 
-### 4. Update configuration file to instantiate instance on AWS
+### Update configuration file to instantiate instance on AWS
 
 ```bash
 cp ./production/config-instance.yaml.sample config-instance.yaml
