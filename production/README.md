@@ -285,7 +285,6 @@ go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -ver
 - github OAuth client id and secret
 - docker-production-compose and various configuration files from template directory
 
-
 ### Environment
 
 - Note, these are met via a Docker based environment where these tools are installed
@@ -296,9 +295,21 @@ go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -ver
 
 We use S3 terraform backend to store terraform's state. See production/backend.tf.sample
 
-### Github OAuth2
+### GitHub OAuth2
 
 Noctua uses OAuth2 for authentication. See templates/github.yaml
+
+- Go to: https://github.com/organizations/geneontology/settings/profile
+- "Developer settings" -> "OAuth apps" -> "New OAuth app"
+  - Application name: "Barista YYYY-MM-DD"
+  - Homepage URL: `https://barista-development-YYYY-MM-DD.geneontology.io`
+  - Application description: This Barista experimental implementation was setup on 2025-07-01.
+  - Authorization callback URL: `https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
+- [Create]
+  - copy the Client ID
+  - Click "Generate a new client secret" and copy Client secrets
+
+Use these above for `github_client_id` and `github_client_secret`.
 
 ### Prepare Blazegraph journal locally
 
