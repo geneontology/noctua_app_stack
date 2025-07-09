@@ -303,7 +303,7 @@ Noctua uses OAuth2 for authentication. See templates/github.yaml
 - "Developer settings" -> "OAuth apps" -> "New OAuth app"
   - Application name: "Barista YYYY-MM-DD"
   - Homepage URL: `https://barista-development-YYYY-MM-DD.geneontology.io`
-  - Application description: This Barista experimental implementation was setup on 2025-07-01.
+  - Application description: This Barista experimental implementation was setup on YYYY-MM-DD.
   - Authorization callback URL: `https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
 - [Create]
   - copy the Client ID

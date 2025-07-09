@@ -1,56 +1,55 @@
 ssh_keys:
-     public: /tmp/go-ssh.pub
-     private: /tmp/go-ssh
+  public: /tmp/go-ssh.pub
+  private: /tmp/go-ssh
 
 stack:
-   vars:
-     stage_dir: /home/ubuntu/stage_dir
-     PROD_MODE: 1
+  vars:
+    stage_dir: /home/ubuntu/stage_dir
+    PROD_MODE: 1
 
-     apache_proxy_image: geneontology/apache-proxy:v6
+    apache_proxy_image: geneontology/apache-proxy:v6
 
-     S3_CRED_FILE: /tmp/go-aws-credentials
-     S3_BUCKET: REPLACE_ME_APACHE_LOG_BUCKET
+    S3_CRED_FILE: /tmp/go-aws-credentials
+    S3_BUCKET: REPLACE_ME_APACHE_LOG_BUCKET
 
-     USE_QOS: 1
-     QS_ClientEventBlockCount: 350
-     QS_ClientEventBlockCountSeconds: 300
-     QS_ClientEventBlockExcludeIP: "8.8.8.8 9.9.9.9"
+    USE_QOS: 1
+    QS_ClientEventBlockCount: 350
+    QS_ClientEventBlockCountSeconds: 300
+    QS_ClientEventBlockExcludeIP: "8.8.8.8 9.9.9.9"
 
-     minerva_java_opts: "-Xmx24G"
+    minerva_java_opts: "-Xmx24G"
 
-     USE_SSL: 1
-     S3_SSL_CERTS_LOCATION: REPLACE_ME_CERT_LOCATION
+    USE_SSL: 1
+    S3_SSL_CERTS_LOCATION: REPLACE_ME_CERT_LOCATION
 
+    # download or create journal locally and specify full path here.
+    # cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
+    # see production/gen_journal.sh.sample to generate one
+    BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH
 
-     # download or create journal locally and specify full path here.
-     # cd /tmp && wget http://skyhook.berkeleybop.org/blazegraph-20230611.jnl
-     # see production/gen_journal.sh.sample to generate one
-     BLAZEGRAPH_JOURNAL: REPLACE_ME_FILE_PATH
+    ## Domains for production.
+    #noctua_host: noctua.geneontology.org
+    noctua_host: noctua.geneontology.io
+    #noctua_host_alias: noctua-production-YYYY-MM-DD.geneontology.org
+    noctua_host_alias: noctua-development-YYYY-MM-DD.geneontology.io
+    #noctua_lookup_url: https://noctua-production-YYYY-MM-DD.geneontology.org
+    noctua_lookup_url: https://noctua-development-YYYY-MM-DD.geneontology.io
+    golr_neo_lookup_url: https://golr-aux.geneontology.org/solr/
 
-     ## Domains for production.
-     #noctua_host: noctua.geneontology.org
-     noctua_host: noctua.geneontology.io
-     #noctua_host_alias: noctua-production-YYYY-MM-DD.geneontology.org
-     noctua_host_alias: noctua-development-YYYY-MM-DD.geneontology.io
-     #noctua_lookup_url: https://noctua-production-YYYY-MM-DD.geneontology.org
-     noctua_lookup_url: https://noctua-development-YYYY-MM-DD.geneontology.io
-     golr_neo_lookup_url: https://golr-aux.geneontology.org/solr/
+    # HTTPS
+    github_client_id: 'REPLACE_ME'
+    github_client_secret: 'REPLACE_ME'
+    #github_callback_url: https://barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback
+    github_callback_url: https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback
+    golr_lookup_url: https://golr-aux.geneontology.org/solr/
 
-     # HTTPS
-     github_client_id: 'REPLACE_ME'
-     github_client_secret: 'REPLACE_ME'
-     #github_callback_url: https://barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback
-     github_callback_url: https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback
-     golr_lookup_url: https://golr-aux.geneontology.org/solr/
+    # HTTPS
+    #barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org
+    barista_lookup_host: barista-development-YYYY-MM-DD.geneontology.io
+    #barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org
+    barista_lookup_host_alias: barista-development-YYYY-MM-DD.geneontology.io
+    #barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org
+    barista_lookup_url: https://barista-development-YYYY-MM-DD.geneontology.io
 
-     # HTTPS
-     #barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org
-     barista_lookup_host: barista-development-YYYY-MM-DD.geneontology.io
-     #barista_lookup_host_alias: barista-production-YYYY-MM-DD.geneontology.org
-     barista_lookup_host_alias: barista-development-YYYY-MM-DD.geneontology.io
-     #barista_lookup_url: https://barista-production-YYYY-MM-DD.geneontology.org
-     barista_lookup_url: https://barista-development-YYYY-MM-DD.geneontology.io
-
-     USE_CLOUDFLARE: 0
-     scripts: [ stage.yaml, start_services.yaml ]
+    USE_CLOUDFLARE: 0
+  scripts: [ stage.yaml, start_services.yaml ]
