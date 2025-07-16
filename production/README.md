@@ -384,10 +384,17 @@ restarting it. This equivalent to `exit` inside the container:
 docker stop noctua-devops
 ```
 
-Restart and attach to the container:
+Restart and attach (aka reattach) to the container:
 
 ```bash
 docker start -ia noctua-devops
+cd /tmp/noctua_app_stack
+```
+
+Test with:
+
+```bash
+go-deploy --working-directory aws -list-workspaces -verbose
 ```
 
 Remove a previously stopped container:
