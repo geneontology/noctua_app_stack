@@ -260,6 +260,30 @@ Now destroy. For example:
 go-deploy --workspace noctua-development-YYYY-MM-DD --working-directory aws -verbose -destroy
 ```
 
+## Readying for "full production"
+
+### Production-ification with Cloudflare
+
+To "finalize" a production setup, we'll want to take the instance that
+we've created and place it behind the generic Cloudflare proxy.
+
+Using "development" setup as example:
+
+- Cloudflare
+  - Go to geneontology.io
+  - [DNS] -> [Records]
+  - Edit the "noctua" record
+	- Update the CNAME to your noctua instance (e.g. noctua-development-YYYY-MM-DD.geneontology.io)
+
+### Model storage
+
+TODO
+
+### Migrations SOP
+
+TODO
+
+
 # Additional information
 
 ## Files
