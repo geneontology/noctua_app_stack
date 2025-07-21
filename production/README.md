@@ -30,6 +30,10 @@ Before starting, ensure the following are available:
    see `YYYY-MM-DD` in this documentation, choose today's date
    (e.g. 2025-03-16). This will uniquely identify the workspace and
    server names.
+8. An AmiGO/GOlr server with a "NEO" load. See:
+   https://github.com/geneontology/amigo/blob/master/provision/production/PRODUCTION_PROVISION_README.md
+   for setting up this instance. Collect location information for this
+   server.
 
 ## Create a Docker development environment and clone repository from Github
 

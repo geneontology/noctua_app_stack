@@ -34,14 +34,14 @@ stack:
     noctua_host_alias: noctua-development-YYYY-MM-DD.geneontology.io
     #noctua_lookup_url: https://noctua-production-YYYY-MM-DD.geneontology.org
     noctua_lookup_url: https://noctua-development-YYYY-MM-DD.geneontology.io
-    golr_neo_lookup_url: https://golr-aux.geneontology.org/solr/
+    golr_neo_lookup_url: https://golr-development-YYYY-MM-DD.geneontology.io/solr/
 
     # HTTPS
     github_client_id: 'REPLACE_ME'
     github_client_secret: 'REPLACE_ME'
     #github_callback_url: https://barista-production-YYYY-MM-DD.geneontology.org/auth/github/callback
     github_callback_url: https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback
-    golr_lookup_url: https://golr-aux.geneontology.org/solr/
+    golr_lookup_url: https://golr-aux.geneontology.io/solr/
 
     # HTTPS
     #barista_lookup_host: barista-production-YYYY-MM-DD.geneontology.org
