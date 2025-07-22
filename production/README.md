@@ -31,7 +31,7 @@ Before starting, ensure the following are available:
    (e.g. 2025-03-16). This will uniquely identify the workspace and
    server names.
 8. An AmiGO/GOlr server with a "NEO" load. See:
-   https://github.com/geneontology/amigo/blob/master/provision/production/PRODUCTION_PROVISION_README.md
+   https://github.com/geneontology/amigo/blob/master/provision/production/README.md
    for setting up this instance. Collect location information for this
    server.
 
@@ -277,7 +277,30 @@ Using "development" setup as example:
   - Go to geneontology.io
   - [DNS] -> [Records]
   - Edit the "noctua" record
-	- Update the CNAME to your noctua instance (e.g. noctua-development-YYYY-MM-DD.geneontology.io)
+	- Update the CNAME to your just-built noctua instance (e.g. noctua-development-YYYY-MM-DD.geneontology.io)
+    - Make sure that "Proxy status" is set to _on_
+	- Note: is may take a few minutes for the cert server at Cloudflare to catch up
+
+### GitHub OAuth2
+
+Noctua uses OAuth2 for authentication. See templates/github.yaml
+
+- Go to: https://github.com/organizations/geneontology/settings/profile
+- "Developer settings" -> "OAuth apps" -> "New OAuth app"
+  - Application name: "Barista YYYY-MM-DD"
+  - Homepage URL: `https://barista-development-YYYY-MM-DD.geneontology.io`
+  - Application description: This Barista experimental implementation was setup on YYYY-MM-DD.
+  - Authorization callback URL: `https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
+- [Create]
+  - copy the Client ID
+  - Click "Generate a new client secret" and copy Client secrets
+
+Use these above for `github_client_id` and `github_client_secret`.
+
+Note: GitHub OAuth2 is amenable to re-using the OAuth2 login between
+instances. So, for example, if you have already made a
+barista-development-2025-03-01.geneontology.io login created, you can
+"update" it to a 2025-06-03 instance by just updating dates.
 
 ### Model storage
 
@@ -323,25 +346,24 @@ TODO
 
 We use S3 terraform backend to store terraform's state. See production/backend.tf.sample
 
-### GitHub OAuth2
+### Preparing a Blazegraph journal locally
 
-Noctua uses OAuth2 for authentication. See templates/github.yaml
+If you have minerva-cli.jar already built, and have the noctua-models that you want to use, you can just run the following command:
 
-- Go to: https://github.com/organizations/geneontology/settings/profile
-- "Developer settings" -> "OAuth apps" -> "New OAuth app"
-  - Application name: "Barista YYYY-MM-DD"
-  - Homepage URL: `https://barista-development-YYYY-MM-DD.geneontology.io`
-  - Application description: This Barista experimental implementation was setup on YYYY-MM-DD.
-  - Authorization callback URL: `https://barista-development-YYYY-MM-DD.geneontology.io/auth/github/callback`
-- [Create]
-  - copy the Client ID
-  - Click "Generate a new client secret" and copy Client secrets
+```bash
+rm -f /tmp/blazegraph.jnl && time java -Xmx8G -jar ./minerva-cli/bin/minerva-cli.jar --import-owl-models -j /tmp/blazegraph.jnl -f ~/local/src/git/noctua-models/models/
+```
 
-Use these above for `github_client_id` and `github_client_secret`.
+You can then copy this into the docker image to continue the stack
+setup:
 
-### Prepare Blazegraph journal locally
+```bash
+docker cp /tmp/blazegraph.jnl noctua-devops:/tmp/blazegraph.jnl
+```
 
-Ff you do not have a journal see production/gen_journal.sh.sample to generate one
+Alternatively, for more detailed instructions, see
+production/gen_journal.sh.sample for an example on for to generate
+one.
 
 ## DNS
 
