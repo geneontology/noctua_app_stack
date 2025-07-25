@@ -167,7 +167,7 @@ Display the terraform state, then display the IP address.
 
 The deploy command creates a terraform tfvars. These variables
 override the variables in `aws/main.tf` As well, the deploy command
-creates a ansible inventory file.
+creates an Ansible inventory file.
 
 For production:
 
@@ -302,14 +302,71 @@ instances. So, for example, if you have already made a
 barista-development-2025-03-01.geneontology.io login created, you can
 "update" it to a 2025-06-03 instance by just updating dates.
 
-### Model storage
+### [WIP] Model storage: AWS S3 version
 
-TODO
+From the noctua-devops docker image, first get AWS credentials over to
+the hosting instance in AWS:
 
-### Migrations SOP
+```bash
+scp -i /tmp/go-ssh /tmp/go-aws-credentials ubuntu@noctua-development-2025-07-17.geneontology.io:/tmp
+```
 
-TODO
+Then go over to new instance:
 
+```bash
+ssh -i /tmp/go-ssh ubuntu@noctua-development-2025-07-17.geneontology.io
+```
+
+On new instance, test our necessary commands with:
+
+```bash
+rm -f /home/ubuntu/go-cams.tgz || true
+time tar --use-compress-program=pigz -cvf /home/ubuntu/go-cams.tgz -C /home/ubuntu/stage_dir/noctua-models/models .
+AWS_SHARED_CREDENTIALS_FILE=/tmp/go-aws-credentials aws s3 cp /home/ubuntu/go-cams.tgz s3://go-cam-store-experimental
+```
+
+You should now be able to access and "push" models to S3.
+
+To get this working in our versioning bucket, add the following to
+crontab (`crontab -e`) as our current default `ubuntu` user:
+
+```bash
+0 0 * * * rm -f /home/ubuntu/go-cams.tgz || true
+5 0 * * * tar --use-compress-program=pigz -cvf /home/ubuntu/go-cams.tgz -C /home/ubuntu/stage_dir/noctua-models/models .
+10 0 * * * AWS_SHARED_CREDENTIALS_FILE=/tmp/go-aws-credentials aws s3 cp /home/ubuntu/go-cams.tgz s3://go-cam-store-experimental
+```
+
+This will push a tarball named "go-cams.tgz" of all models into
+`go-cam-store-experimental` every 24 hours.
+
+### [WIP] Model storage: GitHub version
+
+TODO/WIP
+
+Setup long timeout and token for local ubuntu user.
+
+Then, add the following to the crontab (`crontab -e`) as our current
+default `ubuntu` user:
+
+```crontab
+*/5 * * * * cd ~/staging_dir/noctua-models && git add * && git commit -a -m "automated commit"
+*/30 * * * * cd ~/staging_dir/noctua-models && git push
+```
+
+TODO: Migrations would look like they do now, more or less?
+
+### [WIP] Migrations SOP for AWS S3/GitHub hybrid
+
+1. Stop minerva (docker image?)
+2. Run the crontab commands to push files to S3
+3. Locally, pull over the S3 files and unzip
+4. cp these files to overlay onto github checkout
+5. Commit github checkout
+6. [Proceed with old SOP steps until files are finally committed to GH]
+7. Stand up new instance of Noctua using this SOP
+8. Move noctua.geneontology.io to this new instance
+9. [Testing]
+10. Destroy old instance
 
 # Additional information
 
@@ -317,7 +374,7 @@ TODO
 
 ### Deploy a version of the Noctua editor (including minerva, barista, noctua):
 
-- Important ansible files:
+- Important Ansible files:
   - vars.yaml
   - docker-vars.yaml
   - s3-vars.yaml
