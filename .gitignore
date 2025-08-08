@@ -12,3 +12,4 @@ backend.tf
 blazegraph.jnl
 config-instance.yaml
 config-stack.yaml
+*~
