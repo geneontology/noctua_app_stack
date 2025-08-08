@@ -235,7 +235,7 @@ In stage.yaml, add the following stanza after the "Clone repos that
 are not staged" stanza. This will create a hard link, "simulating" the
 usual name:
 
-In startup.yaml, change `GITHUB_REPO` value to
+In template/startup.yaml, change `GITHUB_REPO` value to
 "devops-noctua-models-experimental".
 
 ```ansible
@@ -251,6 +251,9 @@ The local blazegraph.jnl command would be:
 ```bash
 rm -f /tmp/blazegraph.jnl && time java -Xmx8G -jar ./minerva-cli/bin/minerva-cli.jar --import-owl-models -j /tmp/blazegraph.jnl -f ~/local/src/git/devops-noctua-models-experimental/models/
 ```
+
+WARNING: You may want to replace your image setup after you have
+tainted it with the above non-standard instructions.
 
 ## Deployment
 
