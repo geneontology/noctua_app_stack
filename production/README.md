@@ -222,6 +222,36 @@ Modify the stack configuration file as follows:
 - `barista_lookup_host_alias` should be uncommented and updated
 - `barista_lookup_url` should be uncommented and updated
 
+### [WIP] Using non-master/non-noctua-models model source
+
+Working through the example of wanting to use
+`devops-noctua-models-experimental` (master) instead of the usual
+`noctua-models`.
+
+In vars.yaml, replace `noctua-models: master` with
+`devops-noctua-models-experimental: master` entry.
+
+In stage.yaml, add the following stanza after the "Clone repos that
+are not staged" stanza. This will create a hard link, "simulating" the
+usual name:
+
+In startup.yaml, change `GITHUB_REPO` value to
+"devops-noctua-models-experimental".
+
+```ansible
+  - name: Simulate noctua-models with hard link
+    ansible.builtin.file:
+      src: '{{ stage_dir }}/devops-noctua-models-experimental'
+      dest: '{{ stage_dir }}/noctua-models'
+      state: hard
+```
+
+The local blazegraph.jnl command would be:
+
+```bash
+rm -f /tmp/blazegraph.jnl && time java -Xmx8G -jar ./minerva-cli/bin/minerva-cli.jar --import-owl-models -j /tmp/blazegraph.jnl -f ~/local/src/git/devops-noctua-models-experimental/models/
+```
+
 ## Deployment
 
 For production:
@@ -467,7 +497,7 @@ restarting it. This equivalent to `exit` inside the container:
 docker stop noctua-devops
 ```
 
-Restart and attach (aka reattach) to the container:
+Restart and attach (aka reattach/rejoin) to the container:
 
 ```bash
 docker start -ia noctua-devops
