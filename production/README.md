@@ -224,6 +224,8 @@ Modify the stack configuration file as follows:
 
 ### [WIP] Using non-master/non-noctua-models model source
 
+WARNING: This is not currently working as expected. WIP.
+
 Working through the example of wanting to use
 `devops-noctua-models-experimental` (master) instead of the usual
 `noctua-models`.
