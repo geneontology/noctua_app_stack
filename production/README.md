@@ -174,8 +174,8 @@ For production:
 ```bash
 go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -show
 go-deploy --workspace noctua-production-YYYY-MM-DD --working-directory aws -verbose -output
-cat noctua-development-YYYY-MM-DD.tfvars.json
-cat noctua-development-YYYY-MM-DD-inventory.cfg
+cat noctua-production-YYYY-MM-DD.tfvars.json
+cat noctua-production-YYYY-MM-DD-inventory.cfg
 ```
 
 For development:
