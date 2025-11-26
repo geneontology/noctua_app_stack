@@ -14,15 +14,15 @@ Before starting, ensure the following are available:
 1. AWS credentials (`aws_access_key_id` and `aws_secret_access_key`).
 2. SSH keys. These are `go-ssh` and `go-ssh.pub`. Refer to on-boarding
    instructions.
-3. `github_client_id` and `github_client_secret` - Github OAuth; these
+3. The ability to get `github_client_id` and `github_client_secret` - Github OAuth; these
    should be clarified or made in GitHub's Org -> Settings ->
-   Developer settings -> OAuth Apps.
+   Developer settings -> OAuth Apps. This will be defined later in the README.
 4. Docker. Docker commands are executed from a terminal window.
 5. Blazegraph journal file. `production/gen_journal.sh` has
    instructions on creating one. One may also download a test journal
    from a release
    (e.g. http://current.geneontology.org/products/blazegraph/blazegraph-production.jnl.gz)
-   or use the outage instructions to create a journal.
+   or use the outage instructions to create a journal. This will be defined during the README.
 6. Determine your environment: "production" (which will be deployed to
    geneontology.org) or "development" (which will be deployed to
    geneontology.io).
