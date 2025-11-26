@@ -33,7 +33,7 @@ Before starting, ensure the following are available:
 8. An AmiGO/GOlr server with a "NEO" load. See:
    https://github.com/geneontology/amigo/blob/master/provision/production/README.md
    for setting up this instance. Collect location information for this
-   server.
+   server. Note that we can lso just use whatever is available, like "production" NEO for testing.
 
 ## Create a Docker development environment and clone repository from Github
 
