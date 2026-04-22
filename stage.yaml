@@ -21,7 +21,6 @@
     stat:
       path: '{{ stage_dir }}/{{ item.key }}'
       get_checksum: False
-      get_md5: False
     register: staged_repos_results
     loop: '{{ staged_repos|dict2items }}'
   - name: Clone repos that are not staged
@@ -65,25 +64,24 @@
           src: "{{ S3_CRED_FILE }}"
           dest: "{{ stage_dir }}/credentials/s3cfg"
 
-      - name: copy noop qos.conf 
+      - name: copy noop qos.conf
         copy:
           src: "files/qos-noop.conf"
           dest: '{{ stage_dir }}/qos.conf'
         when: not USE_QOS | bool
 
-      - name: copy robots.txt 
+      - name: copy robots.txt
         copy:
           src: "files/robots.txt"
           dest: "{{ stage_dir }}/robots.txt"
 
-      - name: Check if journal exists 
+      - name: Check if journal exists
         stat:
           path: '{{ stage_dir }}/blazegraph.jnl'
           get_checksum: False
-          get_md5: False
-        register: journal_result 
+        register: journal_result
 
-      - name: copy blazegraph.jnl 
+      - name: copy blazegraph.jnl
         copy:
           src: "{{ BLAZEGRAPH_JOURNAL }}"
           dest: "{{ stage_dir }}/blazegraph.jnl"
@@ -113,7 +111,6 @@
         stat:
           path: '{{ stage_dir }}/srv-solr-data/index'
           get_checksum: False
-          get_md5: False
           register: index_result
       - name: Create Solr Index
         shell: |
@@ -137,27 +134,25 @@
 
   - name: Create journal non production mode
     block:
-      - name: Check if journal exists 
+      - name: Check if journal exists
         stat:
           path: '{{ stage_dir }}/blazegraph.jnl'
           get_checksum: False
-          get_md5: False
-        register: journal_result 
+        register: journal_result
       - name: Create journal blazegraph.jnl
-        shell: | 
+        shell: |
                export CMD="java -Xmx4G -jar minerva-cli.jar --import-owl-models -j /sdir/blazegraph.jnl -f /sdir/noctua-models/models"
                docker run --rm \
                   -v '{{ stage_dir }}:/sdir' \
-                  -t '{{ docker_hub_user }}/minerva:{{ tag }}' $CMD 
+                  -t '{{ docker_hub_user }}/minerva:{{ tag }}' $CMD
         args:
           executable: /bin/bash
         when: not journal_result.stat.exists
     rescue:
-      - name: Remove journal 
+      - name: Remove journal
         file:
           path: '{{ stage_dir }}/blazegraph.jnl'
           state: absent
       - name: Failed to create blazegraph journal
         command: /bin/false
     when: not PROD_MODE | bool
-

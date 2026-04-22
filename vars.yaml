@@ -10,31 +10,32 @@ stage_dir: "{{ lookup('env', 'PWD') }}/stage_dir"
 ##############
 staged_repos:
    noctua-form: master
-   noctua-landing-page: master
-   noctua-models: master
-   go-site: master
    noctua-visual-pathway-editor: master
    noctua-alliance-pathway-preview: master
+   noctua-landing-page: master
+   noctua-standard-annotations: main
+   noctua-models: master
+   go-site: master
 
 ################
-# minerva JAVA_OPTS 
+# minerva JAVA_OPTS
 ##############
 minerva_java_opts: "-Xmx4G"
 
 ######
 # Golr Index
-PROD_MODE: 0 
+PROD_MODE: 0
 #####
 #
-# 
+#
 USE_CLOUDFLARE: 0
 
 ###############
 # Barista Local Authentication.
 ##############
 uri: 'http://orcid.org/XXXX-XXXX-XXXX-XXXX'
-username: REPLACE_ME 
-password: REPLACE_ME 
+username: REPLACE_ME
+password: REPLACE_ME
 
 ###
 # Barista Lookup URL
@@ -62,15 +63,15 @@ noctua_lookup_url: '{{ noctua_protocol }}://{{ noctua_host }}:{{ noctua_proxy_po
 #####
 ## GOLR.
 #########
-golr_host: "{{ host }}" 
-golr_lookup_port: 8983  
+golr_host: "{{ host }}"
+golr_lookup_port: 8983
 golr_protocol: http
 golr_lookup_url: '{{ golr_protocol }}://{{ golr_host }}:{{ golr_lookup_port }}/solr'
 golr_neo_lookup_url: '{{ golr_lookup_url }}'
-golr_labels_url: '{{ golr_lookup_url }}' 
+golr_labels_url: '{{ golr_lookup_url }}'
 
 
-GOLR_INPUT_ONTOLOGIES: "http://skyhook.berkeleybop.org/release/ontology/extensions/go-gaf.owl 
+GOLR_INPUT_ONTOLOGIES: "http://skyhook.berkeleybop.org/release/ontology/extensions/go-gaf.owl
                         http://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl
                         http://skyhook.berkeleybop.org/release/ontology/extensions/gorel.owl"
 
