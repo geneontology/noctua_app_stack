@@ -1,3 +1,5 @@
+# NOTE: This is the older "verbose" version; see: README.md in this directory
+
 # Noctua Production Deployment
 
 This repository enables the deployment of the Noctua stack to AWS. It includes minerva, barista, and noctua and it points to an external amigo instance. The architecture is designed so that sub-components can easily be provisioned, instantiated and deployed. When it is time for the system to be destroyed, all subsystems and artifacts should be removed.
